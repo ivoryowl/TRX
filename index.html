@@ -1,0 +1,3211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+<meta name="theme-color" content="#f4ead5">
+<meta name="app-version" content="1.0.0">
+<meta name="apk-url" content="">
+<title>OWLIX | Semantic Smart Evaluator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  if (typeof pdfjsLib !== 'undefined'){
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+:root,html[data-theme="light"]{
+  --bg:#f4ead5;--bg-2:#ebe0c8;--paper:#faf4e3;--paper-2:#fdf8ea;--paper-3:#f5ebd4;
+  --stroke:rgba(122,90,52,.22);--stroke-2:rgba(122,90,52,.13);
+  --txt:#3a2e1f;--txt-2:#4d3d28;--muted:#7a6a52;
+  --cyan:#a0522d;--violet:#8b3a3a;--green:#5c7a4a;--amber:#b8860b;--red:#a83232;
+  --gold:#b8860b;
+  --shadow:0 10px 32px -14px rgba(74,52,26,.35),0 4px 12px -4px rgba(74,52,26,.15);
+  --orb-1:#e8d5a8;--orb-2:#d9c089;--orb-3:#c9a961;
+  --overlay:rgba(122,90,52,.08);
+  --input-bg:#fdf8ea;--input-focus-bg:#fff;--track-bg:rgba(122,90,52,.15);
+}
+html[data-theme="dark"]{
+  --bg:#12100d;--bg-2:#0d0b08;--paper:#1a1611;--paper-2:#211c16;--paper-3:#161210;
+  --stroke:rgba(212,165,116,.18);--stroke-2:rgba(212,165,116,.1);
+  --txt:#f0e5d0;--txt-2:#e8dcc0;--muted:#a89878;
+  --cyan:#d4a574;--violet:#c97a7a;--green:#8aa87a;--amber:#d4a017;--red:#d96666;
+  --gold:#d4a574;
+  --shadow:0 10px 32px -14px rgba(0,0,0,.7),0 4px 12px -4px rgba(0,0,0,.4);
+  --orb-1:#3d2a1a;--orb-2:#2a1e14;--orb-3:#4a3520;
+  --overlay:rgba(212,165,116,.05);
+  --input-bg:#1f1a14;--input-focus-bg:#252018;--track-bg:rgba(212,165,116,.12);
+}
+html{-webkit-text-size-adjust:100%}
+html,body{min-height:100%;min-height:100dvh}
+body{
+  font-family:"Segoe UI","Tajawal","Noto Naskh Arabic",Tahoma,system-ui,sans-serif;
+  background:var(--bg);color:var(--txt);overflow-x:hidden;
+  line-height:1.8;-webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  padding-top:var(--safe-t);overscroll-behavior-y:contain;
+  transition:background-color .4s ease, color .4s ease;
+  background-image:
+    radial-gradient(circle at 20% 15%, var(--overlay), transparent 45%),
+    radial-gradient(circle at 80% 85%, var(--overlay), transparent 40%);
+}
+input,textarea,select{font-size:16px}
+:root{
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+  --radius:20px;
+  --tab-h:74px;
+}
+.owlix-svg .fade{opacity:0;animation: owlFade .6s ease-out forwards;}
+@keyframes owlFade{to{opacity:1}}
+.owlix-svg .fade-1{animation-delay:.2s}
+.owlix-svg .fade-2{animation-delay:.4s}
+.owlix-svg .owlix-txt{opacity:0;animation: owlTitleIn 1.1s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:.5s;transform-origin: center;}
+@keyframes owlTitleIn{0%{opacity:0;transform:scale(.85)}60%{opacity:1;transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
+.owlix-svg .draw{stroke-dasharray: 1;stroke-dashoffset: 1;animation: owlDraw .9s cubic-bezier(.4,.6,.3,1) forwards;}
+@keyframes owlDraw{to{stroke-dashoffset: 0}}
+.owlix-svg .draw-1{animation-delay:.9s}
+.owlix-svg .sparkle{opacity:0;animation: sparkle 2s ease-in-out infinite;}
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}
+.owlix-svg .sp-1{animation-delay:1.4s}
+.owlix-svg .sp-2{animation-delay:1.7s}
+.owlix-svg .sp-3{animation-delay:2.0s}
+.owlix-svg .sp-4{animation-delay:2.3s}
+#splash{
+  position:fixed;inset:0;z-index:10000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,var(--paper) 0%,var(--bg) 60%,var(--bg-2) 100%);
+  transition:opacity .7s ease, visibility .7s ease;
+  padding:20px;text-align:center;
+}
+#splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.splash-owl{width:340px;height:190px;margin-bottom:12px;display:grid;place-items:center;}
+.splash-owl svg{width:100%;height:100%;display:block}
+.splash-made{font-size:1.05rem;color:var(--muted);font-weight:700;letter-spacing:.5px;line-height:1.5;animation:splashFade .8s ease 1.8s both;}
+.splash-made strong{color:var(--txt-2);font-weight:900;letter-spacing:2px;padding:0 3px;}
+.splash-creator{font-size:1.15rem;color:var(--gold);margin-top:8px;font-weight:700;animation:splashFade .8s ease 1.95s both;}
+.splash-creator span{font-style:italic;color:var(--txt-2);letter-spacing:1px;font-weight:800;}
+@keyframes splashFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.splash-made::after{content:"";display:block;width:60px;height:2px;margin:12px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);border-radius:2px;
+  animation:splashFade .8s ease 1.85s both;}
+.orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;opacity:.4}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:float 18s ease-in-out infinite}
+.o1{width:420px;height:420px;background:var(--orb-1);top:-160px;right:-120px;opacity:.55}
+.o2{width:380px;height:380px;background:var(--orb-2);bottom:-140px;left:-120px;animation-delay:-6s;opacity:.5}
+.o3{width:300px;height:300px;background:var(--orb-3);top:45%;left:45%;animation-delay:-11s;opacity:.2}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-30px,25px) scale(1.06)}66%{transform:translate(25px,-25px) scale(.95)}}
+#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,var(--bg) 0%,var(--bg-2) 100%);padding:20px;}
+#gate.hidden{display:none}
+.gate-box{width:100%;max-width:440px;background:var(--paper);border:1px solid var(--stroke);
+  border-radius:22px;padding:24px;box-shadow:var(--shadow);text-align:center;position:relative;overflow:hidden;}
+.gate-box::before{content:"";position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(184,134,11,.55),rgba(139,58,58,.4),transparent);}
+.gate-logo{width:280px;height:140px;margin:0 auto 12px;display:grid;place-items:center;}
+.gate-logo svg{width:100%;height:100%;display:block}
+.gate-box h2{font-size:1.2rem;font-weight:800;margin-bottom:8px;color:var(--txt-2)}
+.gate-box p{font-size:.86rem;color:var(--muted);line-height:1.8;margin-bottom:18px}
+.gate-input{width:100%;text-align:center;font-size:16px;font-weight:700;padding:15px 14px;border-radius:14px;
+  background:var(--input-bg);border:1.5px solid var(--stroke-2);color:var(--txt);font-family:inherit;transition:.25s;}
+.gate-input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 4px var(--overlay);background:var(--input-focus-bg)}
+.gate-btn{width:100%;margin-top:12px;padding:15px;border-radius:14px;border:none;cursor:pointer;
+  font-family:inherit;font-size:1rem;font-weight:800;color:#fdf8ea;
+  background:linear-gradient(135deg,#b8714a,#8b5a2b 55%,#6d451a);
+  box-shadow:0 10px 26px -10px rgba(139,90,43,.6);transition:.22s;}
+.gate-btn:active{transform:scale(.98)}
+.gate-btn:disabled{opacity:.5;cursor:not-allowed}
+.gate-device{margin-top:16px;padding:12px;border-radius:11px;background:var(--overlay);
+  border:1px dashed var(--gold);font-size:.72rem;color:var(--muted);line-height:1.7;}
+.gate-device code{display:block;margin-top:5px;font-size:.82rem;font-weight:800;letter-spacing:1px;
+  color:var(--txt-2);background:var(--input-bg);padding:6px 10px;border-radius:7px;
+  word-break:break-all;font-family:monospace;}
+.topbar{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:16px 16px 6px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:170px;height:60px;flex:0 0 auto;display:grid;place-items:center;}
+.logo svg{width:100%;height:100%;display:block}
+.badge-live{display:flex;align-items:center;gap:7px;font-size:.7rem;color:var(--gold);
+  background:var(--overlay);border:1px solid var(--gold);padding:6px 12px;border-radius:999px;font-weight:600;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+.theme-toggle{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:var(--paper);border:1.5px solid var(--stroke);cursor:pointer;font-size:1.2rem;
+  transition:.3s;flex:0 0 auto;touch-action:manipulation;color:var(--txt);
+  box-shadow:0 2px 8px -2px rgba(74,52,26,.15);}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle .sun{display:none}
+.theme-toggle .moon{display:block}
+html[data-theme="dark"] .theme-toggle .sun{display:block}
+html[data-theme="dark"] .theme-toggle .moon{display:none}
+.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+.tab-view{position:relative;z-index:2;max-width:1080px;margin:0 auto;
+  padding:10px 16px calc(var(--tab-h) + 20px + var(--safe-b));
+  display:flex;flex-direction:column;gap:16px;}
+#resultsView{position:relative;z-index:2;max-width:1080px;margin:12px auto calc(var(--tab-h) + 20px + var(--safe-b));
+  padding:0 16px;}
+
+.card{position:relative;background:linear-gradient(180deg,var(--paper),var(--paper-3));
+  border:1px solid var(--stroke);border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow);overflow:hidden;animation:cardIn .55s cubic-bezier(.2,.8,.2,1) both;
+  transition:background-color .4s ease, border-color .4s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card::before{content:"";position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(184,134,11,.5),rgba(139,58,58,.35),transparent);}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.card-head h2{font-size:.98rem;font-weight:800;line-height:1.4;color:var(--txt-2)}
+.step{width:28px;height:28px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;
+  font-size:.8rem;font-weight:800;background:linear-gradient(140deg,var(--orb-1),var(--orb-3));
+  border:1px solid var(--stroke);color:var(--txt-2);}
+.hint{font-size:.72rem;color:var(--muted);margin-inline-start:auto;font-weight:600}
+textarea,input[type=text],input[type=number]{width:100%;font-family:inherit;font-size:16px;line-height:1.7;
+  color:var(--txt);background:var(--input-bg);border:1px solid var(--stroke-2);border-radius:14px;
+  padding:13px 14px;outline:none;resize:vertical;transition:border-color .25s,box-shadow .25s,background-color .4s;
+  -webkit-appearance:none;appearance:none;font-weight:500;}
+textarea::placeholder,input[type=text]::placeholder{color:var(--muted);opacity:.7}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{
+  border-color:var(--cyan);box-shadow:0 0 0 4px var(--overlay);background:var(--input-focus-bg);}
+label.lbl{display:block;font-size:.82rem;color:var(--muted);margin-bottom:7px;font-weight:700}
+.dropzone{border:1.5px dashed var(--stroke);border-radius:14px;padding:24px 16px;text-align:center;
+  cursor:pointer;background:var(--overlay);transition:.3s;margin-bottom:12px;touch-action:manipulation;}
+.dropzone:active,.dropzone.over{border-color:var(--cyan);background:var(--overlay);}
+.dropzone.busy{pointer-events:none;opacity:.75}
+.dropzone svg{width:32px;height:32px;stroke:var(--gold);fill:none;stroke-width:1.6;margin-bottom:6px}
+.dropzone p{font-size:.9rem;color:var(--txt-2)}
+.dropzone small{font-size:.72rem;color:var(--muted);display:block;margin-top:4px}
+.pdf-badge{display:inline-block;background:linear-gradient(135deg,#a85050,#7a2a2a);color:#fdf8ea;
+  font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:6px;margin-inline-start:4px;}
+.ocr-toggle-wrap{margin-bottom:14px}
+.ocr-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:14px 18px;border-radius:14px;cursor:pointer;
+  background:var(--overlay);border:1.5px dashed var(--stroke);
+  transition:.25s;user-select:none;touch-action:manipulation;
+}
+.ocr-toggle:active{transform:scale(.99)}
+.ocr-toggle input{display:none}
+.mode-label{font-size:.9rem;font-weight:800;color:var(--muted);transition:.3s;letter-spacing:.3px;white-space:nowrap;}
+.mode-label.active{color:var(--txt-2)}
+.fast-label.active{color:var(--green);text-shadow:0 0 8px rgba(92,122,74,.4)}
+.accurate-label.active{color:var(--violet);text-shadow:0 0 8px rgba(139,58,58,.4)}
+.ocr-track{position:relative;width:64px;height:34px;border-radius:999px;
+  background:rgba(92,122,74,.2);border:1px solid var(--green);transition:.35s;flex:0 0 auto;}
+.ocr-knob{position:absolute;top:3px;right:3px;width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(140deg,#a8d688,#5c7a4a);transition:.35s cubic-bezier(.4,1.6,.5,1);
+  box-shadow:0 2px 6px rgba(0,0,0,.3);}
+.ocr-toggle input:checked ~ .ocr-track{background:rgba(139,58,58,.25);border-color:var(--violet);}
+.ocr-toggle input:checked ~ .ocr-track .ocr-knob{
+  right:calc(100% - 29px);background:linear-gradient(140deg,#d97b6a,#8b3a3a);
+  box-shadow:0 2px 8px rgba(139,58,58,.5);}
+#processingBar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 14px;border-radius:14px;margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(139,58,58,.1),rgba(168,50,50,.06));
+  border:1.5px solid rgba(168,50,50,.4);animation:cardIn .3s both;}
+.processing-info{display:flex;align-items:center;gap:10px;font-size:.85rem;font-weight:700;
+  color:var(--red);flex:1;min-width:0;}
+.spinner{width:18px;height:18px;flex:0 0 auto;border-radius:50%;
+  border:2.5px solid rgba(168,50,50,.25);border-top-color:var(--red);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-cancel{flex:0 0 auto;padding:9px 18px;border-radius:11px;border:1px solid rgba(168,50,50,.5);
+  background:linear-gradient(135deg,#a83232,#7a1a1a);color:#fff;font-family:inherit;
+  font-size:.85rem;font-weight:800;cursor:pointer;transition:.2s;touch-action:manipulation;
+  box-shadow:0 4px 12px -4px rgba(168,50,50,.6);}
+.btn-cancel:active{transform:scale(.96)}
+#processingText{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+#stats{font-size:.74rem;color:var(--muted);font-weight:600}
+.chip-cloud{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.72rem;padding:5px 11px;border-radius:999px;background:rgba(139,58,58,.09);
+  border:1px solid rgba(139,58,58,.25);color:var(--violet);animation:pop .4s both;font-weight:600;}
+@keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+.pdf-filter{margin-top:14px;padding:14px;border-radius:14px;background:var(--overlay);border:1px solid var(--stroke);}
+.pdf-filter-head{display:flex;align-items:center;gap:9px;font-size:.85rem;font-weight:800;
+  color:var(--gold);margin-bottom:12px;flex-wrap:wrap;}
+.pdf-filter-head .info{font-size:.72rem;color:var(--muted);font-weight:600;margin-inline-start:auto;}
+.filter-mode{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+.filter-mode button{padding:10px 6px;border-radius:10px;font-family:inherit;font-size:.8rem;font-weight:700;
+  background:var(--input-bg);color:var(--muted);border:1px solid var(--stroke-2);cursor:pointer;
+  transition:.2s;min-height:42px;touch-action:manipulation;}
+.filter-mode button.active{color:var(--txt-2);border-color:var(--gold);
+  background:linear-gradient(140deg,var(--orb-1),var(--orb-3));}
+.range-row{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:8px;align-items:center;}
+.range-row label{font-size:.8rem;color:var(--muted);font-weight:700;white-space:nowrap}
+.range-row input{padding:9px 10px;text-align:center;font-size:15px;font-weight:700;height:auto;}
+.unit-input-row{display:flex;gap:8px;align-items:stretch;}
+.unit-input-row input{flex:1;min-width:0;padding:11px 13px;font-size:15px;font-weight:600;height:auto;}
+.unit-input-row button{flex:0 0 auto;padding:0 18px;border-radius:12px;font-family:inherit;
+  font-size:.85rem;font-weight:800;color:#fdf8ea;background:linear-gradient(135deg,#b8714a,#8b5a2b);
+  border:none;cursor:pointer;transition:.2s;min-height:46px;touch-action:manipulation;}
+.unit-input-row button:disabled{opacity:.5;cursor:not-allowed}
+.unit-hint{font-size:.74rem;color:var(--muted);margin-top:9px;line-height:1.7;}
+.unit-hint code{background:var(--overlay);color:var(--gold);padding:1px 7px;border-radius:5px;
+  font-size:.85em;border:1px solid var(--stroke);font-weight:700;}
+.unit-status{margin-top:10px;padding:10px 13px;border-radius:11px;font-size:.82rem;font-weight:600;line-height:1.7;}
+.unit-status.ok{background:rgba(92,122,74,.12);border:1px solid var(--green);color:var(--green);}
+.unit-status.err{background:rgba(168,50,50,.1);border:1px solid var(--red);color:var(--red);}
+.settings-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.setting{background:var(--overlay);border:1px solid var(--stroke-2);border-radius:14px;padding:14px;}
+.setting>label{font-size:.8rem;color:var(--txt-2);font-weight:800;display:block;margin-bottom:11px}
+.toggle-wrap{display:flex;align-items:center;gap:11px;justify-content:center}
+.t-label{font-size:.85rem;color:var(--muted);transition:.3s;font-weight:700}
+.t-label.active{color:var(--gold);}
+.switch{position:relative;width:64px;height:36px;border-radius:999px;cursor:pointer;
+  background:var(--track-bg);border:1px solid var(--stroke);transition:.35s;flex:0 0 auto;padding:0;
+  -webkit-appearance:none;appearance:none;}
+.switch .knob{position:absolute;top:3px;right:3px;width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(140deg,var(--orb-1),var(--orb-3));transition:.35s;pointer-events:none;}
+.switch.on{background:linear-gradient(140deg,#c9a961,#a87f4c);border-color:var(--gold)}
+.switch.on .knob{right:calc(100% - 31px);background:linear-gradient(140deg,#fdf4e0,#f0dcae);}
+.mode-desc{font-size:.74rem;color:var(--muted);text-align:center;margin-top:9px;min-height:34px;font-weight:600}
+.check-grid{display:grid;grid-template-columns:1fr;gap:9px}
+.check-pill{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:12px;
+  cursor:pointer;background:var(--input-bg);border:1px solid var(--stroke-2);
+  transition:.25s;user-select:none;touch-action:manipulation;min-height:52px;}
+.check-pill input{display:none}
+.check-pill .box{width:22px;height:22px;border-radius:7px;flex:0 0 auto;border:1.5px solid var(--stroke);
+  display:grid;place-items:center;transition:.22s;background:var(--paper);}
+.check-pill .box::after{content:"✓";font-size:.9rem;font-weight:900;color:#fdf8ea;
+  opacity:0;transform:scale(.3);transition:.2s;}
+.check-pill input:checked ~ .box{background:linear-gradient(140deg,#b8714a,#8b5a2b);border-color:#8b5a2b;}
+.check-pill input:checked ~ .box::after{opacity:1;transform:scale(1)}
+.check-pill input:checked ~ .txt{color:var(--txt-2);font-weight:800}
+.check-pill .txt{font-size:.9rem;font-weight:600;color:var(--muted);transition:.25s}
+.lang-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lang-btn{padding:11px 8px;border-radius:11px;font-family:inherit;font-size:.85rem;font-weight:700;
+  background:var(--input-bg);color:var(--muted);border:1px solid var(--stroke-2);
+  cursor:pointer;transition:.22s;min-height:46px;touch-action:manipulation;}
+.lang-btn.active{color:var(--txt-2);border-color:var(--gold);
+  background:linear-gradient(140deg,var(--orb-1),var(--orb-3));}
+.lang-note{font-size:.74rem;color:var(--muted);text-align:center;margin-top:9px;line-height:1.7;font-weight:600}
+.num-row{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap}
+.num-btn{width:44px;height:44px;border-radius:12px;background:var(--input-bg);border:1px solid var(--stroke);
+  color:var(--txt-2);font-size:1.2rem;font-weight:800;cursor:pointer;font-family:inherit;
+  display:grid;place-items:center;line-height:1;touch-action:manipulation;}
+#qCount{width:84px;height:44px;text-align:center;font-size:16px;font-weight:800;color:var(--txt-2);
+  background:var(--input-bg);border:1px solid var(--stroke);border-radius:12px;font-family:inherit;
+  padding:0;-moz-appearance:textfield;}
+#qCount::-webkit-outer-spin-button,#qCount::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.presets{display:flex;gap:6px;justify-content:center;width:100%;margin-top:6px}
+.presets button{padding:9px 16px;border-radius:10px;font-size:.82rem;font-weight:700;
+  font-family:inherit;cursor:pointer;background:var(--input-bg);color:var(--muted);
+  border:1px solid var(--stroke-2);min-height:42px;flex:1;}
+.presets button.active{color:var(--txt-2);border-color:var(--gold);
+  background:linear-gradient(140deg,var(--orb-1),var(--orb-3));}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{position:relative;overflow:hidden;font-family:inherit;font-size:.92rem;font-weight:800;
+  padding:14px 22px;border-radius:14px;cursor:pointer;border:1px solid transparent;
+  transition:transform .18s,box-shadow .25s;color:#fdf8ea;
+  background:linear-gradient(135deg,#b8714a,#8b5a2b 55%,#6d451a);
+  box-shadow:0 10px 26px -10px rgba(139,90,43,.6);
+  touch-action:manipulation;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.btn:active{transform:translateY(1px) scale(.985)}
+.btn.big{font-size:.98rem;padding:16px 26px;flex:1 1 100%;justify-content:center;width:100%}
+.btn.violet{color:#fdf8ea;background:linear-gradient(135deg,#a85050,#8b3a3a 55%,#5d2626);}
+.btn.amber{color:#fdf8ea;background:linear-gradient(135deg,#c9a961,#a87f4c 55%,#7a5a2a);}
+.btn.green{color:#fdf8ea;background:linear-gradient(135deg,#7a9471,#5c7a4a 55%,#3d5230);}
+.btn.ghost{background:var(--input-bg);color:var(--txt-2);border-color:var(--stroke);
+  box-shadow:0 3px 10px -4px rgba(74,52,26,.15);font-size:.8rem;padding:11px 15px;min-height:44px;}
+.btn.sm{padding:11px 16px;font-size:.84rem;border-radius:11px;min-height:44px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.quiz-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--overlay);border:1px solid var(--stroke);border-radius:12px;padding:10px 13px;
+  margin-bottom:14px;font-size:.82rem;flex-wrap:wrap;font-weight:600;}
+.quiz-bar b{color:var(--gold);font-weight:800}
+.q-card{background:var(--input-bg);border:1px solid var(--stroke-2);border-radius:16px;
+  padding:16px;margin-bottom:14px;animation:cardIn .5s both;}
+.q-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.q-num{flex:0 0 auto;min-width:32px;height:32px;padding:0 8px;border-radius:10px;display:grid;place-items:center;
+  font-size:.78rem;font-weight:800;background:linear-gradient(140deg,var(--orb-1),var(--orb-3));
+  border:1px solid var(--stroke);color:var(--txt-2);}
+.q-text{font-size:.94rem;font-weight:700;line-height:1.85;word-break:break-word;flex:1;min-width:0;color:var(--txt-2)}
+.q-hint{font-size:.76rem;color:var(--gold);background:var(--overlay);border-inline-start:3px solid var(--gold);
+  padding:8px 11px;border-radius:9px;margin-bottom:11px;font-weight:600}
+.q-en-block{direction:ltr;text-align:left;margin-top:8px;padding-top:8px;border-top:1px dashed var(--stroke-2);
+  font-size:.95em;color:var(--txt-2);font-weight:500}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:center;gap:11px;text-align:start;font-family:inherit;font-size:.9rem;
+  color:var(--txt-2);background:var(--paper-3);border:1px solid var(--stroke-2);border-radius:12px;
+  padding:14px;cursor:pointer;transition:.18s;width:100%;font-weight:600;
+  touch-action:manipulation;min-height:52px;}
+.option:disabled{cursor:default}
+.opt-key{flex:0 0 auto;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  font-size:.8rem;font-weight:800;background:var(--overlay);color:var(--muted);}
+.opt-text{flex:1;min-width:0;word-break:break-word}
+.option.selected{background:var(--overlay);border-color:var(--gold);color:var(--txt-2);}
+.option.selected .opt-key{background:var(--gold);color:#1a1611}
+.option.correct{background:rgba(92,122,74,.15);border-color:var(--green);color:var(--green);}
+.option.correct .opt-key{background:var(--green);color:#0d1a08}
+.option.wrong{background:rgba(168,50,50,.12);border-color:var(--red);color:var(--red);}
+.option.wrong .opt-key{background:var(--red);color:#1a0808}
+.saved-msg{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--gold);line-height:1.7;font-weight:600}
+.saved-msg .check{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+  background:var(--overlay);border:1px solid var(--gold);color:var(--gold);font-weight:900}
+.explain{margin-top:12px;padding:13px 14px;border-radius:12px;background:var(--overlay);
+  border:1px solid var(--stroke-2);animation:cardIn .45s both;}
+.explain.saved-explanation{background:var(--overlay);border-color:var(--gold)}
+.bilingual{display:flex;flex-direction:column;gap:8px}
+.bilingual .ar-side{direction:rtl;text-align:right}
+.bilingual .en-side{direction:ltr;text-align:left;color:var(--txt-2);border-top:1px dashed var(--stroke-2);
+  padding-top:8px;margin-top:2px;font-weight:500}
+.lang-chip{display:inline-block;font-size:.65rem;font-weight:800;padding:1px 7px;border-radius:5px;
+  margin-inline-end:6px;letter-spacing:.4px}
+.lang-chip.ar{background:rgba(92,122,74,.18);color:var(--green);border:1px solid var(--green)}
+.lang-chip.en{background:var(--overlay);color:var(--gold);border:1px solid var(--gold)}
+.essay-saved{display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--gold);line-height:1.7;font-weight:600}
+.essay-saved .check{width:34px;height:34px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+  background:var(--overlay);border:1px solid var(--gold);color:var(--gold);font-weight:900;font-size:1.05rem}
+.result-panel{margin-top:14px;border-radius:16px;padding:16px;background:var(--input-bg);
+  border:1px solid var(--stroke);transition:border-color .5s,box-shadow .5s,background .5s;animation:cardIn .45s both;}
+.result-panel.good{border-color:var(--green);background:rgba(92,122,74,.06);}
+.result-panel.warn{border-color:var(--amber);background:rgba(184,134,11,.06);}
+.result-panel.bad{border-color:var(--red);background:rgba(168,50,50,.05);}
+.res-head{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.score-ring{--p:0;--ring:var(--gold);width:68px;height:68px;border-radius:50%;flex:0 0 auto;
+  background:conic-gradient(var(--ring) calc(var(--p) * 1%), var(--overlay) 0);
+  display:grid;place-items:center;position:relative;transition:background .8s ease;
+  box-shadow:0 4px 14px -6px var(--ring);}
+.score-ring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--input-bg)}
+.score-ring span{position:relative;font-size:1.15rem;font-weight:900;color:var(--txt-2)}
+.res-status{font-size:.95rem;font-weight:800;line-height:1.4;color:var(--txt-2)}
+.res-sub{font-size:.76rem;color:var(--muted);margin-top:2px;font-weight:600}
+.res-body{font-size:.9rem;color:var(--txt-2);line-height:2}
+.tags-block{margin-top:14px}
+.tags-title{font-size:.78rem;color:var(--muted);font-weight:700;margin:11px 0 7px;display:flex;align-items:center;gap:7px}
+.cnt{font-size:.7rem;background:var(--overlay);border-radius:999px;padding:1px 9px;color:var(--muted);font-weight:700}
+.tags{display:flex;flex-wrap:wrap;gap:6px;min-height:24px}
+.tag{font-size:.76rem;padding:6px 12px;border-radius:999px;font-weight:700}
+.tags.good .tag{background:rgba(92,122,74,.16);border:1px solid var(--green);color:var(--green)}
+.tags.miss .tag{background:rgba(168,50,50,.12);border:1px solid var(--red);color:var(--red)}
+.tags .empty{font-size:.76rem;color:var(--muted)}
+.scanning{position:relative;overflow:hidden;min-height:130px;border-style:dashed!important;
+  border-color:var(--gold)!important;background:var(--overlay)}
+.scan-line{position:absolute;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--violet),transparent);
+  box-shadow:0 0 20px 4px var(--gold);animation:scanMove 1.5s ease-in-out infinite;}
+@keyframes scanMove{0%{top:0}50%{top:calc(100% - 3px)}100%{top:0}}
+.skel{display:flex;flex-direction:column;gap:10px;padding:20px 16px;position:relative;z-index:1}
+.skel i{display:block;height:10px;border-radius:6px;
+  background:linear-gradient(90deg,var(--overlay),var(--gold),var(--overlay));
+  background-size:220% 100%;animation:shimmer 1.4s linear infinite;opacity:.5}
+.skel i:nth-child(1){width:92%}
+.skel i:nth-child(2){width:74%;animation-delay:.15s}
+.skel i:nth-child(3){width:85%;animation-delay:.3s}
+.skel i:nth-child(4){width:58%;animation-delay:.45s}
+@keyframes shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
+.scan-text{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:.78rem;
+  color:var(--gold);letter-spacing:.5px;font-weight:700}
+#toast{position:fixed;bottom:calc(var(--tab-h) + 20px + var(--safe-b));left:50%;transform:translate(-50%,26px);
+  background:var(--txt);border:1px solid var(--gold);color:var(--bg);
+  font-size:.85rem;font-weight:700;padding:12px 20px;border-radius:14px;
+  box-shadow:0 18px 40px -14px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.4s;
+  z-index:99;max-width:92vw;text-align:center;}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.fab-results{position:fixed;bottom:calc(var(--tab-h) + 16px + var(--safe-b));left:50%;transform:translate(-50%,120px);
+  z-index:80;opacity:0;pointer-events:none;font-family:inherit;font-size:.9rem;font-weight:800;
+  padding:14px 24px;border-radius:999px;border:1px solid transparent;cursor:pointer;color:#fdf8ea;
+  background:linear-gradient(135deg,#b8714a,#8b5a2b);
+  box-shadow:0 12px 30px -10px rgba(139,90,43,.7);
+  transition:transform .4s,opacity .35s;display:flex;align-items:center;gap:9px;
+  max-width:calc(100vw - 24px);touch-action:manipulation;}
+.fab-results.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.fab-results.complete{background:linear-gradient(135deg,#7a9471,#5c7a4a);animation:fabPulse 2s infinite;}
+@keyframes fabPulse{0%{box-shadow:0 12px 30px -10px rgba(92,122,74,.7),0 0 0 0 rgba(92,122,74,.55)}
+  70%{box-shadow:0 12px 30px -10px rgba(92,122,74,.7),0 0 0 14px rgba(92,122,74,0)}
+  100%{box-shadow:0 12px 30px -10px rgba(92,122,74,.7),0 0 0 0 rgba(92,122,74,0)}}
+.fab-results .badge{background:rgba(0,0,0,.25);color:#fdf8ea;font-size:.72rem;
+  padding:2px 9px;border-radius:999px;font-weight:800}
+
+.bottom-tabs{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:1080px;z-index:90;
+  display:flex;justify-content:space-around;align-items:stretch;
+  background:var(--paper);
+  border-top:1px solid var(--stroke);
+  box-shadow:0 -8px 24px -12px rgba(0,0,0,.35);
+  padding:6px 6px calc(6px + var(--safe-b));
+  transition:background-color .4s ease, border-color .4s ease;
+}
+.bottom-tabs.hidden{display:none}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;background:transparent;border:none;font-family:inherit;cursor:pointer;
+  padding:6px 4px;border-radius:12px;transition:.22s;
+  color:var(--muted);position:relative;min-height:58px;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab-btn:active{transform:scale(.96)}
+.tab-btn.active{color:var(--gold);background:var(--overlay);}
+.tab-btn.active .tab-icon{transform:scale(1.08)}
+.tab-btn .tab-icon{font-size:1.3rem;line-height:1;transition:transform .2s}
+.tab-btn .tab-label{font-size:.66rem;font-weight:800;letter-spacing:.2px;white-space:nowrap}
+.tab-btn .tab-badge{
+  position:absolute;top:2px;right:calc(50% - 24px);
+  min-width:16px;height:16px;padding:0 4px;border-radius:999px;
+  background:var(--red);color:#fff;font-size:.58rem;font-weight:900;
+  display:grid;place-items:center;border:1.5px solid var(--paper);
+}
+.tab-btn .tab-badge.green{background:var(--green);}
+
+.res-hero{background:var(--overlay);border:1px solid var(--gold);border-radius:20px;padding:20px;
+  margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;text-align:center;justify-content:center;}
+.res-hero .big-circle{width:110px;height:110px;border-radius:50%;flex:0 0 auto;position:relative;
+  background:conic-gradient(var(--ring,var(--gold)) calc(var(--p,0) * 1%), var(--overlay) 0);
+  display:grid;place-items:center;box-shadow:0 4px 20px -6px var(--ring,var(--gold));}
+.res-hero .big-circle::before{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--paper)}
+.res-hero .big-circle .val{position:relative;font-size:2rem;font-weight:900;color:var(--txt-2);line-height:1}
+.res-hero .big-circle .out{position:relative;font-size:.72rem;color:var(--muted);margin-top:2px;font-weight:700}
+.res-hero-info{flex:1 1 200px;min-width:0}
+.res-hero-info h2{font-size:1.25rem;font-weight:800;margin-bottom:6px;
+  background:linear-gradient(90deg,var(--violet),var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.res-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.res-stat{background:var(--input-bg);border:1px solid var(--stroke);border-radius:16px;padding:16px 12px;text-align:center;}
+.res-stat .num{display:block;font-size:1.5rem;font-weight:900;line-height:1.15;
+  background:linear-gradient(140deg,var(--gold),var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.res-stat .num.green{background:linear-gradient(140deg,#8aa87a,var(--green));-webkit-background-clip:text;background-clip:text}
+.res-stat .num.amber{background:linear-gradient(140deg,var(--amber),var(--gold));-webkit-background-clip:text;background-clip:text}
+.res-stat .num.red{background:linear-gradient(140deg,#d96666,var(--red));-webkit-background-clip:text;background-clip:text}
+.res-stat .lbl{display:block;font-size:.72rem;color:var(--muted);margin-top:5px;font-weight:700}
+.section-title{display:flex;align-items:center;gap:9px;margin:22px 0 12px;
+  font-size:.98rem;font-weight:800;color:var(--txt-2);flex-wrap:wrap;}
+.section-title .icon{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--orb-1),var(--orb-3));border:1px solid var(--stroke);
+  font-size:.95rem;flex:0 0 auto;color:var(--txt-2);}
+.section-title .badge{background:rgba(168,50,50,.15);border:1px solid var(--red);color:var(--red);
+  font-size:.72rem;font-weight:800;padding:2px 10px;border-radius:999px;margin-inline-start:auto;}
+.section-title.ok .badge{background:rgba(92,122,74,.15);border-color:var(--green);color:var(--green)}
+.mistake-card{background:var(--input-bg);border:1px solid rgba(168,50,50,.28);border-radius:16px;
+  padding:16px;margin-bottom:14px;animation:cardIn .45s both;}
+.m-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.m-num{flex:0 0 auto;min-width:44px;padding:5px 10px;border-radius:9px;text-align:center;
+  font-size:.74rem;font-weight:800;background:rgba(168,50,50,.15);border:1px solid var(--red);color:var(--red);}
+.m-q{font-size:.9rem;font-weight:700;line-height:1.85;flex:1;min-width:0;color:var(--txt-2)}
+.m-answer{display:grid;grid-template-columns:1fr;gap:10px;margin:11px 0}
+.m-box{padding:12px 14px;border-radius:12px;font-size:.86rem;line-height:1.8;font-weight:600}
+.m-box.wrong{background:rgba(168,50,50,.09);border:1px solid var(--red);color:var(--red)}
+.m-box.right{background:rgba(92,122,74,.1);border:1px solid var(--green);color:var(--green)}
+.m-box .m-lbl{display:block;font-size:.7rem;font-weight:800;margin-bottom:5px;letter-spacing:.4px;}
+.deep-analysis{margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid var(--gold);background:var(--overlay);}
+.deep-head{display:flex;align-items:center;gap:9px;padding:11px 14px;background:var(--overlay);
+  border-bottom:1px solid var(--stroke);font-size:.85rem;font-weight:800;color:var(--gold);}
+.deep-head .badge-line{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--orb-1),var(--orb-3));border:1px solid var(--stroke);
+  font-size:.8rem;flex:0 0 auto;color:var(--txt-2);}
+.deep-body{padding:14px}
+.deep-section{margin-bottom:14px}
+.deep-section:last-child{margin-bottom:0}
+.deep-section-title{display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:800;color:var(--gold);margin-bottom:8px;}
+.deep-section-title .dot-mark{width:7px;height:7px;border-radius:50%;background:var(--gold);flex:0 0 auto;}
+.deep-section-body{font-size:.85rem;color:var(--txt-2);line-height:2;padding:11px 13px;border-radius:11px;
+  background:var(--input-bg);border:1px solid var(--stroke-2);font-weight:600;}
+.deep-section-body.en{direction:ltr;text-align:left;font-size:.83rem;color:var(--txt-2);
+  border-top:1px dashed var(--stroke-2);margin-top:6px;font-weight:500;}
+.deep-quote{margin-top:8px;padding:9px 12px;border-radius:9px;background:rgba(92,122,74,.09);
+  border-inline-start:3px solid var(--green);font-size:.82rem;color:var(--green);line-height:1.9;
+  font-style:italic;font-weight:600;}
+.distractor-block{margin-top:10px;padding:11px 13px;border-radius:11px;
+  background:rgba(168,50,50,.06);border:1px solid rgba(168,50,50,.25);}
+.distractor-block.distractor-ar{direction:rtl;text-align:right}
+.distractor-block.distractor-en{direction:ltr;text-align:left;margin-top:8px;border-top:1px dashed rgba(168,50,50,.2);}
+.distractor-title{font-size:.74rem;font-weight:800;color:var(--red);margin-bottom:7px;letter-spacing:.5px;}
+.distractor-item{display:flex;gap:9px;padding:8px 10px;border-radius:8px;background:var(--input-bg);
+  margin-bottom:6px;font-size:.81rem;color:var(--txt-2);line-height:1.85;font-weight:600;}
+.distractor-item:last-child{margin-bottom:0}
+.distractor-item .mark{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;
+  background:rgba(168,50,50,.18);border:1px solid var(--red);color:var(--red);font-size:.72rem;font-weight:900;}
+.distractor-item .text{flex:1;min-width:0;word-break:break-word}
+.distractor-item .text b{color:var(--red);display:block;margin-bottom:4px;font-weight:800}
+.essay-feedback{background:var(--input-bg);border:1px solid var(--violet);border-radius:16px;
+  padding:16px;margin-bottom:12px;animation:cardIn .45s both;}
+.essay-answer-box{background:var(--paper-3);border:1px solid var(--stroke-2);border-radius:12px;
+  padding:12px 14px;font-size:.84rem;color:var(--txt-2);line-height:1.9;margin:11px 0;
+  white-space:pre-wrap;word-break:break-word;font-weight:600;}
+.essay-answer-box .m-lbl{display:block;font-size:.7rem;font-weight:800;color:var(--gold);margin-bottom:6px;letter-spacing:.4px;}
+.res-empty{text-align:center;padding:50px 20px;color:var(--muted);font-size:.9rem;font-weight:600}
+.perfect-badge{display:flex;align-items:center;gap:12px;background:rgba(92,122,74,.1);
+  border:1px solid var(--green);border-radius:16px;padding:18px;margin-bottom:12px;
+  color:var(--green);font-size:.9rem;line-height:1.75;font-weight:600;}
+.perfect-badge .picon{font-size:1.8rem;line-height:1;flex:0 0 auto}
+
+.session-card{background:var(--input-bg);border:1px solid var(--stroke-2);border-radius:16px;
+  padding:14px;margin-bottom:12px;animation:cardIn .45s both;transition:border-color .25s;}
+.session-card:hover{border-color:var(--gold);}
+.session-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+.session-date{font-size:.78rem;color:var(--muted);font-weight:700;}
+.session-score{font-size:1.15rem;font-weight:900;padding:4px 12px;border-radius:999px;
+  background:var(--overlay);border:1.5px solid var(--stroke);}
+.session-score.green{color:var(--green);border-color:var(--green);background:rgba(92,122,74,.1);}
+.session-score.amber{color:var(--amber);border-color:var(--amber);background:rgba(184,134,11,.1);}
+.session-score.red{color:var(--red);border-color:var(--red);background:rgba(168,50,50,.1);}
+.session-preview{font-size:.82rem;color:var(--txt-2);line-height:1.7;margin-bottom:10px;
+  padding:9px 12px;border-radius:10px;background:var(--paper-3);border-inline-start:3px solid var(--gold);}
+.session-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.meta-pill{font-size:.7rem;padding:4px 10px;border-radius:999px;background:var(--overlay);
+  border:1px solid var(--stroke-2);color:var(--muted);font-weight:700;}
+.meta-pill.strict{background:rgba(139,58,58,.1);border-color:var(--violet);color:var(--violet);}
+.meta-pill.flexible{background:rgba(92,122,74,.1);border-color:var(--green);color:var(--green);}
+.session-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.session-actions .btn{flex:1;min-width:80px;font-size:.78rem;padding:10px 12px;min-height:42px;}
+.session-actions .del{background:linear-gradient(135deg,#a83232,#7a1a1a);color:#fdf8ea;
+  border:none;box-shadow:0 4px 12px -4px rgba(168,50,50,.6);}
+.history-header-actions{display:flex;gap:8px;margin-inline-start:auto;flex-wrap:wrap;}
+
+.update-hero{
+  text-align:center;padding:26px 18px;border-radius:18px;
+  background:linear-gradient(160deg,var(--overlay),transparent);
+  border:1px dashed var(--gold);margin-bottom:16px;
+}
+.update-hero .up-icon{font-size:3.4rem;line-height:1;margin-bottom:10px;display:block;}
+.update-hero h3{font-size:1.15rem;font-weight:900;color:var(--txt-2);margin-bottom:6px;}
+.update-hero p{font-size:.85rem;color:var(--muted);line-height:1.8;}
+.version-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 14px;border-radius:12px;background:var(--overlay);
+  border:1px solid var(--stroke-2);margin-bottom:10px;font-size:.88rem;font-weight:700;
+}
+.version-row .val{color:var(--gold);font-weight:900;font-family:monospace;font-size:.95rem;}
+.version-row .val.new{color:var(--green);animation:pulseGreen 1.6s infinite;}
+@keyframes pulseGreen{0%,100%{opacity:1}50%{opacity:.6}}
+.platform-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;
+  background:var(--overlay);border:1.5px solid var(--stroke);font-size:.78rem;font-weight:800;color:var(--txt-2);
+}
+.platform-badge.web{border-color:var(--cyan);color:var(--cyan);}
+.platform-badge.apk{border-color:var(--green);color:var(--green);}
+.update-status{
+  margin-top:14px;padding:14px;border-radius:12px;text-align:center;
+  font-size:.9rem;font-weight:700;line-height:1.7;
+}
+.update-status.ok{background:rgba(92,122,74,.1);border:1px solid var(--green);color:var(--green);}
+.update-status.warn{background:rgba(184,134,11,.1);border:1px solid var(--amber);color:var(--amber);}
+.update-status.err{background:rgba(168,50,50,.1);border:1px solid var(--red);color:var(--red);}
+.update-status.info{background:var(--overlay);border:1px solid var(--stroke);color:var(--muted);}
+
+@media(min-width:640px){
+  .settings-grid{grid-template-columns:1fr 1fr}
+  .check-grid{grid-template-columns:1fr 1fr}
+  .presets{width:auto;margin-top:0}
+  .presets button{flex:0 1 auto}
+  .res-summary{grid-template-columns:repeat(4,1fr)}
+  .m-answer{grid-template-columns:1fr 1fr}
+  .btn.big{flex:1 1 auto;width:auto}
+  .res-hero{text-align:start;justify-content:flex-start}
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-2)}
+::-webkit-scrollbar-thumb{background:var(--stroke);border-radius:9px}
+::selection{background:var(--overlay);color:var(--txt-2)}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-owl">
+    <svg class="owlix-svg" viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" aria-label="OWLIX">
+      <defs>
+        <linearGradient id="owlixGA" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#8b3a3a"/>
+          <stop offset="50%" stop-color="#b8714a"/>
+          <stop offset="100%" stop-color="#8b5a2b"/>
+        </linearGradient>
+      </defs>
+      <g class="fade fade-1" fill="url(#owlixGA)">
+        <path d="M 450 55 L 460 68 L 450 81 L 440 68 Z"/>
+        <circle cx="415" cy="68" r="3"/>
+        <circle cx="485" cy="68" r="3"/>
+        <path d="M 380 68 L 405 68" stroke="url(#owlixGA)" stroke-width="1.5" fill="none"/>
+        <path d="M 495 68 L 520 68" stroke="url(#owlixGA)" stroke-width="1.5" fill="none"/>
+      </g>
+      <g class="fade fade-2" stroke="url(#owlixGA)" fill="none" stroke-width="1.5" stroke-linecap="round">
+        <path d="M 130 175 C 170 175, 190 165, 200 175 C 190 185, 170 175, 130 175"/>
+        <circle cx="120" cy="175" r="3" fill="url(#owlixGA)"/>
+      </g>
+      <g class="fade fade-2" stroke="url(#owlixGA)" fill="none" stroke-width="1.5" stroke-linecap="round">
+        <path d="M 770 175 C 730 175, 710 165, 700 175 C 710 185, 730 175, 770 175"/>
+        <circle cx="780" cy="175" r="3" fill="url(#owlixGA)"/>
+      </g>
+      <text class="owlix-txt" x="450" y="220" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic" font-weight="500" font-size="160"
+        fill="url(#owlixGA)">Owlix</text>
+      <path class="draw draw-1" pathLength="1"
+        d="M 220 255 C 320 275, 580 275, 680 255 C 710 248, 730 250, 740 260 C 745 268, 740 275, 730 275"
+        stroke="url(#owlixGA)" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+      <g class="fade fade-2" fill="url(#owlixGA)">
+        <path d="M 450 285 L 452 292 L 458 294 L 452 296 L 450 303 L 448 296 L 442 294 L 448 292 Z"/>
+      </g>
+      <g class="fade fade-1" fill="url(#owlixGA)">
+        <circle cx="240" cy="262" r="2.5"/>
+        <circle cx="660" cy="262" r="2.5"/>
+      </g>
+    </svg>
+  </div>
+  <div class="splash-made">صنع بواسطة <strong>TRX</strong></div>
+  <div class="splash-creator">(<span>Hussein</span>)</div>
+</div>
+
+<div id="gate" class="hidden">
+  <div class="gate-box">
+    <div class="gate-logo">
+      <svg class="owlix-svg" viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" aria-label="OWLIX">
+        <defs>
+          <linearGradient id="owlixGB" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8b3a3a"/>
+            <stop offset="50%" stop-color="#b8714a"/>
+            <stop offset="100%" stop-color="#8b5a2b"/>
+          </linearGradient>
+        </defs>
+        <g class="fade fade-1" fill="url(#owlixGB)">
+          <path d="M 450 55 L 460 68 L 450 81 L 440 68 Z"/>
+          <circle cx="415" cy="68" r="3"/>
+          <circle cx="485" cy="68" r="3"/>
+          <path d="M 380 68 L 405 68" stroke="url(#owlixGB)" stroke-width="1.5" fill="none"/>
+          <path d="M 495 68 L 520 68" stroke="url(#owlixGB)" stroke-width="1.5" fill="none"/>
+        </g>
+        <g class="fade fade-2" stroke="url(#owlixGB)" fill="none" stroke-width="1.5" stroke-linecap="round">
+          <path d="M 130 175 C 170 175, 190 165, 200 175 C 190 185, 170 175, 130 175"/>
+          <circle cx="120" cy="175" r="3" fill="url(#owlixGB)"/>
+        </g>
+        <g class="fade fade-2" stroke="url(#owlixGB)" fill="none" stroke-width="1.5" stroke-linecap="round">
+          <path d="M 770 175 C 730 175, 710 165, 700 175 C 710 185, 730 175, 770 175"/>
+          <circle cx="780" cy="175" r="3" fill="url(#owlixGB)"/>
+        </g>
+        <text class="owlix-txt" x="450" y="220" text-anchor="middle"
+          font-family="Georgia, 'Times New Roman', serif"
+          font-style="italic" font-weight="500" font-size="160"
+          fill="url(#owlixGB)">Owlix</text>
+        <path class="draw draw-1" pathLength="1"
+          d="M 220 255 C 320 275, 580 275, 680 255 C 710 248, 730 250, 740 260 C 745 268, 740 275, 730 275"
+          stroke="url(#owlixGB)" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div id="gateNew">
+      <h2>الدخول محمي</h2>
+      <p>هذا التطبيق خاص. أدخل اسمك لإرسال طلب الدخول للمشرف.</p>
+      <input type="text" id="gateName" class="gate-input" placeholder="اسمك الكامل" maxlength="40" autocomplete="off">
+      <button class="gate-btn" id="gateSubmit">📨 إرسال طلب الدخول</button>
+      <div class="gate-device">معرّف جهازك (احتفظ به):<code id="gateDevIdNew">—</code></div>
+    </div>
+    <div id="gatePending" hidden>
+      <h2>⏳ بانتظار الموافقة</h2>
+      <p>سيتم تفعيل جهازك خلال دقائق. اضغط "تحديث" بعد أن يخبرك المشرف.</p>
+      <button class="gate-btn" id="gateRefresh">🔄 تحديث الحالة</button>
+      <div class="gate-device">معرّف جهازك:<code id="gateDevIdPending">—</code></div>
+    </div>
+    <div id="gateDenied" hidden>
+      <h2>❌ تم رفض الدخول</h2>
+      <p>جهازك غير مصرّح. تواصل مع المشرف.</p>
+      <div class="gate-device">معرّف جهازك:<code id="gateDevIdDenied">—</code></div>
+    </div>
+  </div>
+</div>
+
+<div class="orbs"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">
+      <svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" aria-label="OWLIX">
+        <defs>
+          <linearGradient id="owlixGC" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8b3a3a"/>
+            <stop offset="50%" stop-color="#b8714a"/>
+            <stop offset="100%" stop-color="#8b5a2b"/>
+          </linearGradient>
+        </defs>
+        <g fill="url(#owlixGC)">
+          <path d="M 450 55 L 460 68 L 450 81 L 440 68 Z"/>
+          <circle cx="415" cy="68" r="3"/>
+          <circle cx="485" cy="68" r="3"/>
+          <path d="M 380 68 L 405 68" stroke="url(#owlixGC)" stroke-width="1.5" fill="none"/>
+          <path d="M 495 68 L 520 68" stroke="url(#owlixGC)" stroke-width="1.5" fill="none"/>
+        </g>
+        <g stroke="url(#owlixGC)" fill="none" stroke-width="1.5" stroke-linecap="round">
+          <path d="M 130 175 C 170 175, 190 165, 200 175 C 190 185, 170 175, 130 175"/>
+          <circle cx="120" cy="175" r="3" fill="url(#owlixGC)"/>
+          <path d="M 770 175 C 730 175, 710 165, 700 175 C 710 185, 730 175, 770 175"/>
+          <circle cx="780" cy="175" r="3" fill="url(#owlixGC)"/>
+        </g>
+        <text x="450" y="220" text-anchor="middle"
+          font-family="Georgia, 'Times New Roman', serif"
+          font-style="italic" font-weight="500" font-size="160"
+          fill="url(#owlixGC)">Owlix</text>
+        <path d="M 220 255 C 320 275, 580 275, 680 255 C 710 248, 730 250, 740 260 C 745 268, 740 275, 730 275"
+          stroke="url(#owlixGC)" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M 450 285 L 452 292 L 458 294 L 452 296 L 450 303 L 448 296 L 442 294 L 448 292 Z" fill="url(#owlixGC)"/>
+      </svg>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="تبديل الوضع">
+      <span class="moon">🌙</span>
+      <span class="sun">☀️</span>
+    </button>
+    <div class="badge-live"><span class="dot"></span> <span id="apiBadge">DeepSeek + Gemini</span></div>
+  </div>
+</header>
+
+<!-- تبويب الرئيسية -->
+<div id="mainView" class="tab-view">
+  <section class="card">
+    <div class="card-head">
+      <span class="step">1</span>
+      <h2>المحتوى المرجعي</h2>
+      <span class="hint">ارفع ملفاً أو الصق النص</span>
+    </div>
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept=".pdf,.txt,.md,.csv,.json,.rtf" hidden>
+      <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p><strong>اسحب الملف هنا</strong> أو اضغط للاختيار</p>
+      <small>يدعم: <span class="pdf-badge">PDF</span> TXT · MD · CSV · JSON</small>
+    </div>
+    <div id="processingBar" hidden>
+      <div class="processing-info">
+        <span class="spinner"></span>
+        <span id="processingText">جاري المعالجة...</span>
+      </div>
+      <button class="btn-cancel" id="btnCancelProcessing" type="button">⏹ إيقاف</button>
+    </div>
+    <div class="ocr-toggle-wrap">
+      <label class="ocr-toggle" for="useOCR">
+        <span class="mode-label fast-label active">⚡ سريع</span>
+        <input type="checkbox" id="useOCR">
+        <span class="ocr-track"><span class="ocr-knob"></span></span>
+        <span class="mode-label accurate-label">🔍 دقيق</span>
+      </label>
+    </div>
+    <textarea id="sourceText" rows="7" placeholder="الصق هنا النص المرجعي..."></textarea>
+    <div class="pdf-filter" id="pdfFilter" hidden>
+      <div class="pdf-filter-head">
+        <span>📄</span>
+        <span>نطاق الأسئلة</span>
+        <span class="info" id="pdfPagesInfo">—</span>
+      </div>
+      <div class="filter-mode" id="filterMode">
+        <button data-fmode="all" class="active" type="button">كل الملف</button>
+        <button data-fmode="range" type="button">صفحات محددة</button>
+        <button data-fmode="unit" type="button">وحدة محددة</button>
+      </div>
+      <div id="rangePanel" hidden>
+        <div class="range-row">
+          <label>من صفحة</label>
+          <input type="number" id="fromPage" min="1" value="1">
+          <label>إلى صفحة</label>
+          <input type="number" id="toPage" min="1" value="1">
+        </div>
+      </div>
+      <div id="unitPanel" hidden>
+        <div class="unit-input-row">
+          <input type="text" id="unitInput" placeholder="اكتب اسم الوحدة... مثال: الوحدة الأولى">
+          <button type="button" id="unitSearchBtn" disabled>🔍 استخرج</button>
+        </div>
+        <p class="unit-hint">
+          يقبل: <code>الوحدة الأولى</code> · <code>Unit 3</code> · <code>الفصل الثاني</code> · <code>Chapter 5</code>
+        </p>
+        <div class="unit-status" id="unitStatus" hidden></div>
+      </div>
+    </div>
+    <div class="meta-row">
+      <span id="stats">0 كلمة · 0 كلمة مفتاحية</span>
+      <button class="btn ghost" id="btnSample">تجربة نموذج جاهز</button>
+    </div>
+    <div class="chip-cloud" id="kwCloud"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="step">2</span>
+      <h2>إعدادات التقييم والتوليد</h2>
+    </div>
+    <div class="settings-grid">
+      <div class="setting">
+        <label>نمط التقييم</label>
+        <div class="toggle-wrap">
+          <span class="t-label active" data-mode="flexible">مرن</span>
+          <button class="switch" id="modeToggle" role="switch" aria-checked="false"><span class="knob"></span></button>
+          <span class="t-label" data-mode="strict">صارم</span>
+        </div>
+        <p class="mode-desc" id="modeDesc">الوضع المرن: يقبل أي إضافة صحيحة علمياً.</p>
+      </div>
+      <div class="setting">
+        <label>نوع الأسئلة المطلوبة</label>
+        <div class="check-grid">
+          <label class="check-pill">
+            <input type="checkbox" id="typeMCQ" checked>
+            <span class="box"></span><span class="txt">اختيار من متعدد</span>
+          </label>
+          <label class="check-pill">
+            <input type="checkbox" id="typeEssay" checked>
+            <span class="box"></span><span class="txt">مقالية / سردية</span>
+          </label>
+        </div>
+      </div>
+      <div class="setting">
+        <label>🎯 مستوى الصعوبة</label>
+        <div class="lang-row" id="difficultyRow">
+          <button class="lang-btn diff-btn" data-diff="easy" type="button">🟢 سهل</button>
+          <button class="lang-btn diff-btn active" data-diff="medium" type="button">🟡 متوسط</button>
+          <button class="lang-btn diff-btn" data-diff="hard" type="button">🔴 صعب</button>
+        </div>
+        <p class="lang-note" id="diffNote">مستوى متوسط: تطبيق وتحليل.</p>
+      </div>
+      <div class="setting">
+        <label>🌐 لغة الأسئلة</label>
+        <div class="lang-row" id="langRow">
+          <button class="lang-btn active" data-lang="ar" type="button">عربي</button>
+          <button class="lang-btn" data-lang="en" type="button">English</button>
+          <button class="lang-btn" data-lang="both" type="button">الاثنان</button>
+        </div>
+        <p class="lang-note" id="langNote">الأسئلة بالعربية — الشرح باللغتين.</p>
+      </div>
+      <div class="setting">
+        <label>عدد الأسئلة (من 1 إلى 30)</label>
+        <div class="num-row">
+          <button class="num-btn" data-step="-1" type="button">−</button>
+          <input type="number" id="qCount" value="5" min="1" max="30">
+          <button class="num-btn" data-step="1" type="button">+</button>
+          <div class="presets" id="presets">
+            <button type="button" data-preset="3">3</button>
+            <button type="button" data-preset="5" class="active">5</button>
+            <button type="button" data-preset="10">10</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn big" id="btnGenerate">🚀 توليد الأسئلة الآن</button>
+    </div>
+  </section>
+</div>
+
+<!-- تبويب الاختبار -->
+<div id="quizView" class="tab-view" hidden>
+  <div id="quizEmpty" class="card">
+    <div class="res-empty">
+      <div style="font-size:3rem;margin-bottom:12px">📝</div>
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--txt-2)">لا يوجد اختبار بعد</div>
+      <div style="font-size:.85rem;line-height:1.8;margin-bottom:18px">اذهب إلى تبويب "الرئيسية"، ارفع ملفك، اضبط الإعدادات، ثم اضغط "توليد الأسئلة".</div>
+      <button class="btn" id="btnGoHomeFromQuiz">🏠 اذهب للرئيسية</button>
+    </div>
+  </div>
+
+  <section class="card" id="card-quiz" hidden>
+    <div class="card-head">
+      <span class="step">3</span>
+      <h2>الاختبار التفاعلي</h2>
+      <span class="hint">أجب عن الكل — النتيجة في النهاية</span>
+    </div>
+    <div class="quiz-bar">
+      <span>التقدم: <b id="quizScore">0 / 0</b></span>
+      <span id="quizMsg">أجب عن الأسئلة — النتيجة تظهر في النهاية فقط</span>
+    </div>
+    <div id="quizBody"></div>
+  </section>
+
+  <section class="card" id="card-essay" hidden>
+    <div class="card-head">
+      <span class="step">4</span>
+      <h2>الأسئلة السردية / الشرحية</h2>
+      <span class="hint">اكتب بأسلوبك — التقييم في النهاية</span>
+    </div>
+    <div id="essayBody"></div>
+  </section>
+</div>
+
+<!-- تبويب الجلسات السابقة -->
+<div id="historyView" class="tab-view" hidden>
+  <div class="card">
+    <div class="card-head">
+      <span class="step">📚</span>
+      <h2>الجلسات السابقة</h2>
+      <div class="history-header-actions">
+        <button class="btn ghost" id="btnClearHistory">🗑 مسح الكل</button>
+      </div>
+    </div>
+    <div id="historyBody"></div>
+  </div>
+</div>
+
+<!-- تبويب التحديث -->
+<div id="updateView" class="tab-view" hidden>
+  <div class="card">
+    <div class="card-head">
+      <span class="step">🔄</span>
+      <h2>التحديثات</h2>
+    </div>
+
+    <div class="update-hero">
+      <span class="up-icon">🚀</span>
+      <h3>تحقق من التحديثات</h3>
+      <p>تأكد من حصولك على آخر إصدار من التطبيق.<br>سيتم التحديث تلقائياً حسب نوع المنصة.</p>
+    </div>
+
+    <div class="version-row">
+      <span>📌 إصدارك الحالي</span>
+      <span class="val" id="currentVersionLabel">—</span>
+    </div>
+
+    <div class="version-row">
+      <span>🌐 آخر إصدار متاح</span>
+      <span class="val" id="latestVersionLabel">—</span>
+    </div>
+
+    <div class="version-row">
+      <span>📱 المنصة</span>
+      <span class="platform-badge web" id="platformLabel">🌐 موقع</span>
+    </div>
+
+    <div class="actions" style="margin-top:18px">
+      <button class="btn big" id="btnCheckUpdate">🔍 التحقق من التحديثات</button>
+    </div>
+
+    <div id="updateStatus" class="update-status" hidden></div>
+
+    <div class="actions" id="updateActions" hidden style="margin-top:18px">
+      <button class="btn big green" id="btnInstallUpdate">⬇ تثبيت التحديث الآن</button>
+    </div>
+  </div>
+</div>
+
+<div id="resultsView" hidden>
+  <div class="card">
+    <div class="card-head">
+      <span class="step">★</span>
+      <h2>النتيجة النهائية</h2>
+      <div style="margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost" id="btnExportPDF" style="padding:9px 16px;font-size:.78rem;border-radius:11px">📄 تصدير PDF</button>
+        <button class="btn violet" id="btnNewQuestionsTop" style="padding:9px 16px;font-size:.78rem;border-radius:11px">🆕 أسئلة جديدة</button>
+        <button class="btn amber" id="btnRetryTop" style="padding:9px 16px;font-size:.78rem;border-radius:11px">🔄 إعادة</button>
+        <button class="btn ghost" id="btnBackMainTop">← رجوع</button>
+      </div>
+    </div>
+    <div id="resultsBody"></div>
+    <div class="actions" style="margin-top:22px">
+      <button class="btn violet big" id="btnNewQuestionsBottom">🆕 محاولة بأسئلة جديدة</button>
+      <button class="btn amber big" id="btnRetryBottom">🔄 إعادة المحاولة على نفس الأسئلة</button>
+      <button class="btn big" id="btnBackMainBottom">🏠 العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<button class="fab-results" id="fabResults" type="button">
+  <span>📊 عرض النتائج</span>
+  <span class="badge" id="fabBadge">0</span>
+</button>
+
+<!-- الشريط السفلي -->
+<nav class="bottom-tabs" id="bottomTabs">
+  <button class="tab-btn active" data-tab="main" type="button">
+    <span class="tab-icon">🏠</span>
+    <span class="tab-label">الرئيسية</span>
+  </button>
+  <button class="tab-btn" data-tab="quiz" type="button">
+    <span class="tab-icon">📝</span>
+    <span class="tab-label">الاختبار</span>
+    <span class="tab-badge" id="quizTabBadge" hidden>0</span>
+  </button>
+  <button class="tab-btn" data-tab="history" type="button">
+    <span class="tab-icon">📚</span>
+    <span class="tab-label">الجلسات</span>
+    <span class="tab-badge" id="historyTabBadge" hidden>0</span>
+  </button>
+  <button class="tab-btn" data-tab="update" type="button">
+    <span class="tab-icon">🔄</span>
+    <span class="tab-label">التحديث</span>
+    <span class="tab-badge green" id="updateTabBadge" hidden>●</span>
+  </button>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+/* ================================================================
+   ⚙️ الإعدادات
+   ================================================================ */
+const WORKER_URL = 'https://sse-gate-v2.haneenalhassein232.workers.dev';
+const DEEPSEEK_ENABLED = true;
+const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-3.1-flash-lite"];
+
+/* ================================================================
+   🔄 إعدادات التحديث
+   ================================================================ */
+const APP_VERSION = "1.0.0";
+const UPDATE_CONFIG = {
+  // رابط موقعك الحي — يُقرأ منه الـ meta tag
+  liveUrl: "https://ivoryowl.github.io/TRX/index.html"
+};
+
+let PROCESSING = { active: false, cancelled: false };
+
+/* ================================================================
+   🌙 الوضع الليلي
+   ================================================================ */
+(function initTheme(){
+  const saved = localStorage.getItem('owlix_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeColor(saved);
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('owlix_theme', next);
+      updateThemeColor(next);
+      if (typeof toast === 'function') toast(next === 'dark' ? '🌙 الوضع الليلي' : '☀️ الوضع النهاري');
+    });
+  });
+})();
+function updateThemeColor(theme){
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = theme === 'dark' ? '#12100d' : '#f4ead5';
+}
+
+/* ================================================================
+   🦉 شاشة الافتتاح
+   ================================================================ */
+(function splashScreen(){
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+  const showDuration = 2600;
+  function hideSplash(){
+    splash.classList.add('hidden');
+    setTimeout(() => { if (splash.parentNode) splash.remove(); }, 800);
+  }
+  if (document.readyState === 'complete') setTimeout(hideSplash, showDuration);
+  else window.addEventListener('load', () => setTimeout(hideSplash, showDuration));
+})();
+
+/* ================================================================
+   🔐 بوابة الدخول
+   ================================================================ */
+const GATE = {
+  workerUrl: WORKER_URL,
+  storageKey: 'sse_gate_approved',
+  pollInterval: 8000,
+};
+function gateDeviceId(){
+  let id = localStorage.getItem('sse_device_id');
+  if (!id){
+    const rand = () => Math.random().toString(36).substring(2, 7).toUpperCase();
+    id = rand() + '-' + rand() + '-' + rand();
+    localStorage.setItem('sse_device_id', id);
+  }
+  return id;
+}
+function showGateState(state){
+  const map = { new: 'gateNew', pending: 'gatePending', denied: 'gateDenied' };
+  ['gateNew','gatePending','gateDenied'].forEach(k => {
+    const el = document.getElementById(k);
+    if (el) el.hidden = true;
+  });
+  if (map[state]){
+    const el = document.getElementById(map[state]);
+    if (el) el.hidden = false;
+  }
+  const gate = document.getElementById('gate');
+  if (gate) gate.classList.remove('hidden');
+  ['gateDevIdNew','gateDevIdPending','gateDevIdDenied'].forEach(k => {
+    const el = document.getElementById(k);
+    if (el) el.textContent = gateDeviceId();
+  });
+}
+function hideGate(){
+  const gate = document.getElementById('gate');
+  if (gate) gate.classList.add('hidden');
+}
+async function gateCheck(){
+  try {
+    const r = await fetch(GATE.workerUrl + '/api/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deviceId: gateDeviceId() })
+    });
+    const data = await r.json();
+    return data.status;
+  } catch(e){ return 'offline'; }
+}
+async function gateRequest(name){
+  const r = await fetch(GATE.workerUrl + '/api/request', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ deviceId: gateDeviceId(), name })
+  });
+  return r.json();
+}
+let gatePollTimer = null;
+function startGatePolling(){
+  stopGatePolling();
+  gatePollTimer = setInterval(async () => {
+    const s = await gateCheck();
+    if (s === 'approved'){
+      localStorage.setItem(GATE.storageKey, 'true');
+      stopGatePolling();
+      hideGate();
+      if (typeof toast === 'function') toast('✅ تم تفعيل جهازك');
+    }
+    if (s === 'denied') showGateState('denied');
+  }, GATE.pollInterval);
+}
+function stopGatePolling(){
+  if (gatePollTimer) clearInterval(gatePollTimer);
+  gatePollTimer = null;
+}
+async function gateInit(){
+  if (localStorage.getItem(GATE.storageKey) === 'true'){ hideGate(); return; }
+  const s = await gateCheck();
+  if (s === 'approved'){ localStorage.setItem(GATE.storageKey, 'true'); hideGate(); return; }
+  if (s === 'pending'){ showGateState('pending'); startGatePolling(); return; }
+  if (s === 'denied'){ showGateState('denied'); return; }
+  showGateState('new');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(gateInit, 2600);
+  const sBtn = document.getElementById('gateSubmit');
+  const rBtn = document.getElementById('gateRefresh');
+  const nameI = document.getElementById('gateName');
+  if (sBtn) sBtn.addEventListener('click', async () => {
+    const name = nameI.value.trim();
+    if (name.length < 2){ alert('اكتب اسمك أولاً'); return; }
+    sBtn.disabled = true;
+    sBtn.textContent = '⏳ جاري الإرسال...';
+    try {
+      const res = await gateRequest(name);
+      if (res.status === 'approved'){ localStorage.setItem(GATE.storageKey, 'true'); hideGate(); return; }
+      showGateState('pending');
+      startGatePolling();
+    } catch(e){
+      alert('تعذّر الاتصال بالخادم');
+      sBtn.disabled = false;
+      sBtn.textContent = '📨 إرسال طلب الدخول';
+    }
+  });
+  if (rBtn) rBtn.addEventListener('click', async () => {
+    const s = await gateCheck();
+    if (s === 'approved'){
+      localStorage.setItem(GATE.storageKey, 'true');
+      stopGatePolling();
+      hideGate();
+      if (typeof toast === 'function') toast('✅ تم تفعيل جهازك');
+    } else if (s === 'denied'){ showGateState('denied'); }
+    else { alert('لا تزال بانتظار الموافقة'); }
+  });
+});
+
+/* ================================================================
+   🛠 أدوات عامة
+   ================================================================ */
+const $  = (s, p = document) => p.querySelector(s);
+const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(v => v[1]);
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nl2br = s => escapeHtml(s).replace(/\n/g, '<br>');
+const trim = (s, n) => s.length > n ? s.slice(0, n).trim() + '…' : s;
+
+function toast(msg){
+  const t = $('#toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function shuffleQuestionOptions(q){
+  if (!q || !Array.isArray(q.options) || q.options.length < 2) return q;
+  const correctIdx = q.options.findIndex(o => o.correct);
+  if (correctIdx < 0) return q;
+  const shuffled = shuffle([...q.options]);
+  q.options = shuffled;
+  q.correctIndex = shuffled.findIndex(o => o.correct);
+  return q;
+}
+
+function formatArabicDate(ts){
+  const d = new Date(ts);
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${days[d.getDay()]}، ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} — ${hh}:${mm}`;
+}
+
+function compareVersions(a, b){
+  const pa = String(a).split('.').map(n => parseInt(n, 10) || 0);
+  const pb = String(b).split('.').map(n => parseInt(n, 10) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++){
+    const x = pa[i] || 0, y = pb[i] || 0;
+    if (x > y) return 1;
+    if (x < y) return -1;
+  }
+  return 0;
+}
+
+function detectPlatform(){
+  const ua = navigator.userAgent || '';
+  if (/wv/.test(ua) && /Android/i.test(ua)) return 'apk';
+  if (window.Android || window.Capacitor || window.cordova) return 'apk';
+  return 'web';
+}
+
+/* ================================================================
+   🌐 أدوات اللغة
+   ================================================================ */
+let QUESTION_LANG = 'ar';
+let DIFFICULTY = 'medium';
+
+function questionHtml(obj){
+  if (obj == null) return '';
+  if (typeof obj === 'string') return nl2br(obj);
+  const ar = obj.ar || '', en = obj.en || '';
+  if (QUESTION_LANG === 'ar') return nl2br(ar || en);
+  if (QUESTION_LANG === 'en') return `<span dir="ltr" style="display:inline-block;text-align:left">${nl2br(en || ar)}</span>`;
+  const parts = [];
+  if (ar) parts.push(nl2br(ar));
+  if (en && en !== ar) parts.push(`<div class="q-en-block">${nl2br(en)}</div>`);
+  return parts.join('');
+}
+function bilingualHtml(obj){
+  if (obj == null) return '';
+  if (typeof obj === 'string') return nl2br(obj);
+  const ar = obj.ar || '', en = obj.en || '';
+  const parts = [];
+  if (ar) parts.push(`<div class="ar-side"><span class="lang-chip ar">AR</span>${nl2br(ar)}</div>`);
+  if (en) parts.push(`<div class="en-side"><span class="lang-chip en">EN</span>${nl2br(en)}</div>`);
+  return `<div class="bilingual">${parts.join('')}</div>`;
+}
+const langLabelOf = () => ({ ar:'العربية فقط', en:'English only', both:'الاثنان' }[QUESTION_LANG]);
+const langNoteOf = () => ({
+  ar: 'الأسئلة والخيارات بالعربية — الشرح باللغتين.',
+  en: 'Questions & options in English — explanations in both.',
+  both: 'الأسئلة والخيارات بالعربية والإنجليزية معاً.'
+}[QUESTION_LANG]);
+const langInstructionOf = () => ({
+  ar: 'اكتب نص السؤال والخيارات بالعربية فقط، لكن احتفظ بالنسخة الإنجليزية من الشرح كاملة.',
+  en: 'Write the question and options in English only, but keep the full Arabic explanation too.',
+  both: 'اكتب نص السؤال والخيارات بالعربية والإنجليزية معاً في الحقول المناسبة.'
+}[QUESTION_LANG]);
+
+const diffLabelOf = () => ({ easy:'سهل', medium:'متوسط', hard:'صعب' }[DIFFICULTY]);
+const diffNoteOf = () => ({
+  easy: 'مستوى سهل: تذكّر وفهم أساسي.',
+  medium: 'مستوى متوسط: تطبيق وتحليل.',
+  hard: 'مستوى صعب: تركيب وتقويم وتفكير نقدي.'
+}[DIFFICULTY]);
+const diffInstructionOf = () => ({
+  easy: 'Difficulty: EASY. Focus on recall and basic comprehension. Questions should be straightforward.',
+  medium: 'Difficulty: MEDIUM. Focus on application and analysis. Questions require reasoning.',
+  hard: 'Difficulty: HARD. Focus on synthesis, evaluation, and critical thinking. Questions should be challenging and require deep understanding.'
+}[DIFFICULTY]);
+
+/* ================================================================
+   NLP محلي
+   ================================================================ */
+const STOPWORDS = new Set([
+  'في','من','على','الى','عن','ان','اذا','كان','كانت','يكون','هو','هي','هما','هم','هن',
+  'هذا','هذه','ذلك','تلك','التي','الذي','الذين','مع','بين','كل','بعض','قد','لا','ما',
+  'لم','لن','او','ثم','لكن','حتي','كما','عند','عندما','بعد','قبل','حول','ضمن','دون',
+  'غير','سوي','نحو','خلال','اي','ايضا','هناك','هنا','كذلك','به','بها','له','لها',
+  'منه','منها','عليه','عليها','انه','انها','نحن','انت','انا','يجب','يمكن','يتم','تم',
+  'وهو','وهي','مثل','مثلا','حيث','بشكل','طريقه','طرق','اكثر','اقل','جدا',
+  'فان','بينما','لذلك','وقد','وكان','وهذا','وهذه','اما'
+]);
+function cleanWord(w){ return String(w).replace(/[^\u0600-\u06FF\u0750-\u077Fa-zA-Z0-9]/g, ''); }
+function normalize(w){
+  return cleanWord(w)
+    .replace(/[\u064B-\u0652\u0670\u0640]/g, '')
+    .replace(/[إأآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ئ/g, 'ي').replace(/ؤ/g, 'و').replace(/ة/g, 'ه')
+    .toLowerCase();
+}
+function stem(raw){
+  let w = normalize(raw).trim();
+  if (w.length < 4) return w;
+  w = w.replace(/^(وال|فال|بال|كال|لال|لل|ال)/, '');
+  if (w.length > 4) w = w.replace(/(ات|ون|ين|ها|هم|هن|كم|نا|ه)$/, '');
+  return w;
+}
+const SYN_GROUPS = [
+  ['تدريس','تعليم','تلقين','درس','محاضرة','شرح'],
+  ['طالب','طلاب','متعلم','متعلمين','تلميذ','دارس','متلقين'],
+  ['معلم','مدرس','استاذ','مربي','مدرسين'],
+  ['هدف','اهداف','غاية','غايات','مقصد','مقاصد','غرض'],
+  ['طريقة','طرق','اسلوب','اساليب','منهج','مناهج','وسيلة','وسائل','اداة','ادوات'],
+  ['تقييم','تقويم','قياس','اختبار','امتحان','قياسي'],
+  ['محتوى','مضمون','مادة','موضوع'],
+  ['مهارة','قدرة','كفاية','امكانية','مهارات'],
+  ['معرفة','علم','فهم','ادراك','استيعاب','وعي'],
+  ['نشاط','انشطة','تفاعل','مشاركة','حيوية','اندماج'],
+  ['تخطيط','اعداد','تحضير','تنظيم','تخطيطي'],
+  ['ذاكرة','حفظ','استظهار','تلقين'],
+  ['تطور','نمو','تقدم','ارتقاء'],
+  ['ضعف','صعوبة','عجز','قصور','تدني'],
+  ['معالجة','علاج','تصحيح','تحسين','تدارك']
+];
+const SYN = {};
+SYN_GROUPS.forEach((g, i) => g.forEach(w => { SYN[stem(w)] = i; }));
+function sameIdea(a, b){
+  if (!a || !b) return false;
+  if (a === b) return true;
+  return SYN[a] !== undefined && SYN[a] === SYN[b];
+}
+const tokens = t => String(t).split(/\s+/).filter(Boolean);
+function splitSentences(text){
+  return String(text).split(/[.!?؟\n\r]+|•|؛|،(?=\s{2,})/).map(s => s.trim()).filter(s => s.length > 25);
+}
+function extractKeywords(text){
+  const freq = new Map(), display = new Map();
+  tokens(text).forEach(raw => {
+    const w = normalize(raw);
+    if (w.length < 3 || STOPWORDS.has(w)) return;
+    const s = stem(w);
+    if (s.length < 3 || STOPWORDS.has(s)) return;
+    freq.set(s, (freq.get(s) || 0) + 1);
+    const cur = display.get(s);
+    const clean = cleanWord(raw);
+    if (!cur || clean.length > cur.length) display.set(s, clean);
+  });
+  return [...freq.entries()].map(([s, c]) => ({ stem: s, word: display.get(s) || s, count: c }))
+    .sort((a, b) => (b.count - a.count) || (b.word.length - a.word.length));
+}
+function matchKeywords(studentText, expected){
+  const stuStems = [...new Set(tokens(studentText).map(normalize).map(stem).filter(Boolean))];
+  const matched = [], missing = [];
+  expected.forEach(k => {
+    (stuStems.some(s => sameIdea(s, k.stem)) ? matched : missing).push(k);
+  });
+  return { matched, missing };
+}
+function similarity(a, b){
+  const A = new Set(tokens(a).map(normalize).map(stem).filter(Boolean));
+  const B = new Set(tokens(b).map(normalize).map(stem).filter(Boolean));
+  if (!A.size || !B.size) return 0;
+  let inter = 0; A.forEach(x => { if (B.has(x)) inter++; });
+  return (inter / A.size) * Math.min(1, A.size / B.size);
+}
+
+/* ================================================================
+   📄 استخراج PDF
+   ================================================================ */
+let pdfPages = [];
+let currentFilter = { mode: 'all', from: 1, to: 1, unitQuery: '', unitRange: null };
+
+async function extractPdfPagesFast(file){
+  if (typeof pdfjsLib === 'undefined') throw new Error('مكتبة PDF غير محمّلة');
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  const pages = [];
+  const PRESENTATION_MAP = {
+    '\uFE8D':'\u0627','\uFE8E':'\u0627','\uFE8F':'\u0628','\uFE90':'\u0628','\uFE91':'\u0628','\uFE92':'\u0628',
+    '\uFE93':'\u0629','\uFE94':'\u0629','\uFE95':'\u062A','\uFE96':'\u062A','\uFE97':'\u062A','\uFE98':'\u062A',
+    '\uFE99':'\u062B','\uFE9A':'\u062B','\uFE9B':'\u062B','\uFE9C':'\u062B','\uFE9D':'\u062C','\uFE9E':'\u062C',
+    '\uFE9F':'\u062C','\uFEA0':'\u062C','\uFEA1':'\u062D','\uFEA2':'\u062D','\uFEA3':'\u062D','\uFEA4':'\u062D',
+    '\uFEA5':'\u062E','\uFEA6':'\u062E','\uFEA7':'\u062E','\uFEA8':'\u062E','\uFEA9':'\u062F','\uFEAA':'\u062F',
+    '\uFEAB':'\u0630','\uFEAC':'\u0630','\uFEAD':'\u0631','\uFEAE':'\u0631','\uFEAF':'\u0632','\uFEB0':'\u0632',
+    '\uFEB1':'\u0633','\uFEB2':'\u0633','\uFEB3':'\u0633','\uFEB4':'\u0633','\uFEB5':'\u0634','\uFEB6':'\u0634',
+    '\uFEB7':'\u0634','\uFEB8':'\u0634','\uFEB9':'\u0635','\uFEBA':'\u0635','\uFEBB':'\u0635','\uFEBC':'\u0635',
+    '\uFEBD':'\u0636','\uFEBE':'\u0636','\uFEBF':'\u0636','\uFEC0':'\u0636','\uFEC1':'\u0637','\uFEC2':'\u0637',
+    '\uFEC3':'\u0637','\uFEC4':'\u0637','\uFEC5':'\u0638','\uFEC6':'\u0638','\uFEC7':'\u0638','\uFEC8':'\u0638',
+    '\uFEC9':'\u0639','\uFECA':'\u0639','\uFECB':'\u0639','\uFECC':'\u0639','\uFECD':'\u063A','\uFECE':'\u063A',
+    '\uFECF':'\u063A','\uFED0':'\u063A','\uFED1':'\u0641','\uFED2':'\u0641','\uFED3':'\u0641','\uFED4':'\u0641',
+    '\uFED5':'\u0642','\uFED6':'\u0642','\uFED7':'\u0642','\uFED8':'\u0642','\uFED9':'\u0643','\uFEDA':'\u0643',
+    '\uFEDB':'\u0643','\uFEDC':'\u0643','\uFEDD':'\u0644','\uFEDE':'\u0644','\uFEDF':'\u0644','\uFEE0':'\u0644',
+    '\uFEE1':'\u0645','\uFEE2':'\u0645','\uFEE3':'\u0645','\uFEE4':'\u0645','\uFEE5':'\u0646','\uFEE6':'\u0646',
+    '\uFEE7':'\u0646','\uFEE8':'\u0646','\uFEE9':'\u0647','\uFEEA':'\u0647','\uFEEB':'\u0647','\uFEEC':'\u0647',
+    '\uFEED':'\u0648','\uFEEE':'\u0648','\uFEEF':'\u0649','\uFEF0':'\u0649','\uFEF1':'\u064A','\uFEF2':'\u064A',
+    '\uFEF3':'\u064A','\uFEF4':'\u064A','\uFEF5':'\u0644\u0622','\uFEF6':'\u0644\u0622','\uFEF7':'\u0644\u0623',
+    '\uFEF8':'\u0644\u0623','\uFEF9':'\u0644\u0625','\uFEFA':'\u0644\u0625','\uFEFB':'\u0644\u0627','\uFEFC':'\u0644\u0627'
+  };
+  function fixPresentation(text){ return text.replace(/[\uFE70-\uFEFF]/g, ch => PRESENTATION_MAP[ch] || ch); }
+  for (let i = 1; i <= pdf.numPages; i++){
+    if (PROCESSING.cancelled) throw new Error('CANCELLED');
+    $('#processingText').textContent = `⚡ استخراج سريع: صفحة ${i} / ${pdf.numPages}`;
+    $('#stats').textContent = `⚡ استخراج سريع: صفحة ${i} / ${pdf.numPages}`;
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const items = content.items.filter(it => it.str && it.str.length > 0);
+    const linesMap = new Map();
+    items.forEach(it => {
+      const tx = it.transform;
+      const x = tx[4];
+      const y = Math.round(tx[5] * 10) / 10;
+      if (!linesMap.has(y)) linesMap.set(y, []);
+      linesMap.get(y).push({ str: it.str, x, y });
+    });
+    const sortedYs = [...linesMap.keys()].sort((a, b) => b - a);
+    const lines = [];
+    sortedYs.forEach(y => {
+      const lineItems = linesMap.get(y).sort((a, b) => b.x - a.x);
+      let lineText = lineItems.map(it => it.str).join('');
+      lineText = fixPresentation(lineText);
+      lineText = lineText.replace(/\s+/g, ' ').trim();
+      if (lineText) lines.push(lineText);
+    });
+    pages.push({ index: i, text: lines.join('\n') });
+  }
+  return pages;
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result || '';
+      const idx = result.indexOf(',');
+      resolve(idx >= 0 ? result.slice(idx + 1) : result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function extractPdfViaGemini(file){
+  if (PROCESSING.cancelled) throw new Error('CANCELLED');
+  let numPages = 0;
+  try {
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    numPages = pdf.numPages;
+  } catch(e){}
+  const totalMsg = numPages ? ` (${numPages} صفحة)` : '';
+  $('#processingText').textContent = `✨ استخراج دقيق${totalMsg}...`;
+  $('#stats').textContent = `✨ استخراج دقيق${totalMsg}...`;
+  const base64 = await fileToBase64(file);
+  const sizeMB = (base64.length * 0.75) / (1024 * 1024);
+  if (sizeMB > 19) throw new Error(`الملف كبير جداً (${sizeMB.toFixed(1)} MB). الحد الأقصى 20 MB — استخدم الوضع السريع.`);
+  const prompt = `استخرج كل النص من ملف PDF المرفق بدقة كاملة.
+
+⚠️ تعليمات صارمة:
+1. اقرأ كل صفحة واكتب نصها كاملاً بالترتيب.
+2. حافظ على ترتيب الكلمات العربية من اليمين لليسار.
+3. اكتب الكلمات العربية موصولة بأحرفها الأصلية.
+4. حافظ على الأسطر والفقرات كما في الأصل.
+5. ابدأ كل صفحة بسطر جديد: «--- صفحة N ---».
+6. لا تضف أي شرح.
+
+أعد النص كاملاً.`;
+  const text = await callGemini(prompt, [{ inline_data: { mime_type: 'application/pdf', data: base64 } }], false);
+  if (PROCESSING.cancelled) throw new Error('CANCELLED');
+  if (!text || text.length < 20) throw new Error('لم يُرجع النص');
+  const pages = [];
+  const parts = text.split(/---\s*صفحة\s*(\d+)\s*---/);
+  if (parts.length > 1){
+    for (let i = 1; i < parts.length; i += 2){
+      const idx = parseInt(parts[i], 10);
+      const content = (parts[i + 1] || '').trim();
+      if (content) pages.push({ index: idx, text: content });
+    }
+  }
+  if (!pages.length) pages.push({ index: 1, text: text.trim() });
+  return pages;
+}
+
+async function extractPdfPages(file){
+  const useGemini = $('#useOCR') && $('#useOCR').checked;
+  if (!useGemini) return await extractPdfPagesFast(file);
+  return await extractPdfViaGemini(file);
+}
+
+function normalizeAr(s){
+  return String(s)
+    .replace(/[\u064B-\u0652\u0670\u0640]/g, '')
+    .replace(/[إأآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
+    .replace(/\s+/g, ' ').trim().toLowerCase();
+}
+function findUnitRange(query){
+  const q = query.trim();
+  if (!q) return null;
+  const qNorm = normalizeAr(q);
+  const unitStartPatterns = [
+    /الوحدة\s+(الأولى|الثانية|الثالثة|الرابعة|الخامسة|السادسة|السابعة|الثامنة|التاسعة|العاشرة|الحادية\s+عشرة|الثانية\s+عشرة|\d+)/gi,
+    /Unit\s+\d+/gi, /Chapter\s+\d+/gi, /Module\s+\d+/gi,
+    /الفصل\s+(الأول|الثاني|الثالث|الرابع|الخامس|السادس|السابع|الثامن|التاسع|العاشر|\d+)/gi,
+    /الباب\s+(الأول|الثاني|الثالث|الرابع|الخامس|\d+)/gi,
+    /المحور\s+(الأول|الثاني|الثالث|الرابع|\d+)/gi
+  ];
+  let startPage = -1, matchedTitle = '';
+  for (const p of pdfPages){
+    const textNorm = normalizeAr(p.text);
+    if (textNorm.includes(qNorm)){
+      startPage = p.index;
+      for (const re of unitStartPatterns){
+        re.lastIndex = 0;
+        const m = p.text.match(re);
+        if (m){
+          const mNorm = normalizeAr(m[0]);
+          if (mNorm.includes(qNorm) || qNorm.includes(mNorm) || textNorm.includes(qNorm)){
+            matchedTitle = m[0].trim(); break;
+          }
+        }
+      }
+      if (!matchedTitle) matchedTitle = q;
+      break;
+    }
+  }
+  if (startPage < 0) return null;
+  let endPage = pdfPages.length;
+  for (const p of pdfPages){
+    if (p.index <= startPage) continue;
+    for (const re of unitStartPatterns){
+      re.lastIndex = 0;
+      const m = p.text.match(re);
+      if (m){ endPage = p.index - 1; break; }
+    }
+    if (endPage !== pdfPages.length) break;
+  }
+  if (endPage < startPage) endPage = startPage;
+  return { startPage, endPage, title: matchedTitle };
+}
+function setupPdfFilter(){
+  const filter = $('#pdfFilter');
+  filter.hidden = false;
+  const totalPages = pdfPages.length;
+  $('#pdfPagesInfo').textContent = `${totalPages} صفحة`;
+  const fromEl = $('#fromPage'), toEl = $('#toPage');
+  fromEl.max = totalPages; toEl.max = totalPages;
+  fromEl.value = 1; toEl.value = totalPages;
+  currentFilter = { mode: 'all', from: 1, to: totalPages, unitQuery: '', unitRange: null };
+  $$('#filterMode button').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'all'));
+  $('#rangePanel').hidden = true;
+  $('#unitPanel').hidden = true;
+  $('#unitInput').value = '';
+  $('#unitStatus').hidden = true;
+  updateUnitBtnState();
+}
+function updateUnitBtnState(){
+  const v = $('#unitInput').value.trim();
+  $('#unitSearchBtn').disabled = v.length < 2;
+}
+function applyFilterAndUpdate(){
+  if (!pdfPages.length) return;
+  let pages = [], scopeLabel = '';
+  if (currentFilter.mode === 'all'){
+    pages = pdfPages;
+    scopeLabel = `كل الملف (${pdfPages.length} صفحة)`;
+  } else if (currentFilter.mode === 'range'){
+    const from = Math.max(1, Math.min(pdfPages.length, Number($('#fromPage').value) || 1));
+    const to   = Math.max(from, Math.min(pdfPages.length, Number($('#toPage').value) || pdfPages.length));
+    pages = pdfPages.slice(from - 1, to);
+    scopeLabel = `الصفحات ${from} – ${to} (${pages.length} صفحة)`;
+  } else if (currentFilter.mode === 'unit'){
+    if (!currentFilter.unitRange) return;
+    const { startPage, endPage, title } = currentFilter.unitRange;
+    pages = pdfPages.filter(p => p.index >= startPage && p.index <= endPage);
+    scopeLabel = `${title} · ص${startPage}–${endPage} (${pages.length} صفحة)`;
+  }
+  const text = pages.map(p => p.text).join('\n\n');
+  els.sourceText.value = text.slice(0, 30000);
+  updateStats();
+  $('#pdfPagesInfo').textContent = scopeLabel;
+}
+
+/* ================================================================
+   🌐 Gemini API — عبر Worker
+   ================================================================ */
+async function callGemini(systemPrompt, parts, expectJSON = true){
+  const allParts = [];
+  if (systemPrompt) allParts.push({ text: systemPrompt });
+  if (Array.isArray(parts)) allParts.push(...parts);
+  else allParts.push({ text: String(parts) });
+
+  const body = {
+    contents: [{ parts: allParts }],
+    generationConfig: { temperature: 0.5, maxOutputTokens: 65536 }
+  };
+  if (expectJSON) body.generationConfig.responseMimeType = 'application/json';
+
+  let lastError = null;
+
+  for (let i = 0; i < GEMINI_MODELS.length; i++){
+    const modelName = GEMINI_MODELS[i];
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 180000);
+
+    try {
+      const res = await fetch(WORKER_URL + '/api/ai/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: modelName, ...body }),
+        signal: controller.signal
+      });
+
+      if (!res.ok){
+        const errText = await res.text();
+        let msg = `API ${res.status}`;
+        try {
+          const errJson = JSON.parse(errText);
+          if (errJson.error?.message) msg += `: ${errJson.error.message}`;
+        } catch(_){ msg += `: ${errText.slice(0, 200)}`; }
+        console.warn(`⚠️ [${modelName}] فشل:`, msg);
+        lastError = new Error(msg);
+        if (res.status === 400 || res.status === 401 || res.status === 403) throw lastError;
+        continue;
+      }
+
+      const data = await res.json();
+      const candidate = data.candidates?.[0];
+      if (!candidate || !candidate.content){
+        lastError = new Error('لم يُرجع محتوى');
+        continue;
+      }
+
+      if (candidate.finishReason === 'MAX_TOKENS'){
+        toast('⚠️ النص المستخرج غير مكتمل — الملف أكبر من حد النموذج');
+      }
+
+      const text = candidate.content.parts?.map(p => p.text || '').join('') || '';
+      if (!text){
+        lastError = new Error('نص فارغ');
+        continue;
+      }
+
+      if (i > 0) toast(`✅ تم التبديل إلى النموذج البديل`);
+      if (!expectJSON) return text;
+
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('لم يُرجع JSON صالحاً');
+      return JSON.parse(match[0]);
+
+    } catch (err){
+      if (err.name === 'AbortError'){
+        lastError = new Error('انتهت المهلة');
+        continue;
+      }
+      if (err.message && (err.message.includes('400') || err.message.includes('401') || err.message.includes('403'))) throw err;
+      lastError = err;
+      continue;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw lastError || new Error('فشل جميع النماذج');
+}
+
+/* ================================================================
+   🤖 DeepSeek API — عبر Worker
+   ================================================================ */
+async function callDeepSeek(systemPrompt, userPrompt, expectJSON = true){
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60000);
+  const body = {
+    model: "deepseek-chat",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ],
+    temperature: 0.5,
+    max_tokens: 6000
+  };
+  if (expectJSON) body.response_format = { type: "json_object" };
+  try {
+    const res = await fetch(WORKER_URL + '/api/ai/deepseek', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+    if (!res.ok){
+      const txt = await res.text();
+      throw new Error(`API ${res.status}: ${txt.slice(0, 200)}`);
+    }
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content || "";
+    if (!expectJSON) return content;
+    const match = content.match(/\{[\s\S]*\}/);
+    return JSON.parse(match ? match[0] : content);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/* ================================================================
+   🎯 التقييم
+   ================================================================ */
+async function mockEvaluate(payload){
+  const { source, question, answer, expected, model, mode } = payload;
+  if (!DEEPSEEK_ENABLED){ await sleep(1500); return computeEvaluation(payload); }
+  const systemPrompt = (mode === 'strict')
+    ? `You are a STRICT academic evaluator who speaks fluent Arabic and English. Rely ONLY on the reference text. Always return valid JSON only.`
+    : `You are a FLEXIBLE academic evaluator who speaks fluent Arabic and English. Accept any scientifically valid addition. Always return valid JSON only.`;
+  const userPrompt =
+`Reference text:
+"""
+${source.slice(0, 6000)}
+"""
+
+Question: ${question}
+Student's answer: ${answer}
+
+⚠️ All feedback fields MUST have BOTH Arabic (ar) and English (en) versions with comprehensive detail.
+
+Return ONLY this JSON:
+{
+  "status_ar": "جملة قصيرة",
+  "status_en": "Short phrase",
+  "score": number 0-10,
+  "weakness_ar": "تعليق تفصيلي وافٍ لا يقل عن 4-6 أسطر بالعربية.",
+  "weakness_en": "Detailed comment of 4-6 lines in English.",
+  "missing_keywords": ["..."],
+  "matched_keywords": ["..."],
+  "copy_ratio": number 0-100,
+  "note_ar": "ملاحظة قصيرة بالعربية",
+  "note_en": "Short English note"
+}`;
+  try {
+    const parsed = await callDeepSeek(systemPrompt, userPrompt);
+    return normalizeEvalResponse(parsed, payload);
+  } catch (err){
+    console.warn("DeepSeek error:", err);
+    toast("⚠️ تعذّر الاتصال — تم التقييم محلياً");
+    return computeEvaluation(payload);
+  }
+}
+
+function normalizeEvalResponse(p, payload){
+  const score = Math.max(0, Math.min(10, Number(p.score) || 0));
+  const colorClass = score >= 8 ? 'good' : score >= 5 ? 'warn' : 'bad';
+  const ring = score >= 8 ? '#5c7a4a' : score >= 5 ? '#b8860b' : '#a83232';
+  const matched = (p.matched_keywords || []).map(w => ({ word: w, stem: stem(w) }));
+  const missing = (p.missing_keywords || []).map(w => ({ word: w, stem: stem(w) }));
+  return {
+    status: { ar: p.status_ar || '', en: p.status_en || '' },
+    score, colorClass, ring,
+    weakness: { ar: p.weakness_ar || '', en: p.weakness_en || '' },
+    matched, missing,
+    subtitle: {
+      ar: `الدرجة: ${score} / 10 — ${matched.length} مطابقة · ${missing.length} ناقصة`,
+      en: `Score: ${score} / 10 — ${matched.length} matched · ${missing.length} missing`
+    },
+    analysis: {
+      words: tokens(payload.answer).length,
+      matched: matched.length, missing: missing.length,
+      copy: Number(p.copy_ratio) || 0,
+      note: { ar: p.note_ar || '', en: p.note_en || '' }
+    }
+  };
+}
+
+async function mockGenerateQuiz({ source, count, mode }){
+  if (!DEEPSEEK_ENABLED){ await sleep(1500); return generateMCQ(source, count); }
+  const systemPrompt = `You are a multilingual MCQ generator (Arabic + English). You write COMPREHENSIVE and UNAMBIGUOUS explanations. Return ONLY valid JSON.`;
+  const userPrompt =
+`From the reference text below, generate ${count} high-quality multiple-choice questions.
+
+Reference text:
+"""
+${source.slice(0, 6000)}
+"""
+
+Question language: ${langLabelOf()}
+${langInstructionOf()}
+${diffInstructionOf()}
+
+⚠️ CRITICAL: explanations MUST be detailed (4-6 sentences each), and each distractor reason 3-4 sentences. Always in BOTH Arabic and English.
+
+Return ONLY this JSON:
+{
+  "questions": [
+    {
+      "question_ar": "نص السؤال بالعربية",
+      "question_en": "Question in English",
+      "options_ar": ["خيار1","خيار2","خيار3","خيار4"],
+      "options_en": ["Option 1","Option 2","Option 3","Option 4"],
+      "correctIndex": 0,
+      "explanation_ar": "شرح وافٍ لا يقل عن 4 أسطر.",
+      "explanation_en": "Detailed explanation at least 4 sentences.",
+      "distractor_reasons_ar": ["سبب خيار 1","سبب خيار 2","سبب خيار 3"],
+      "distractor_reasons_en": ["Reason 1","Reason 2","Reason 3"]
+    }
+  ]
+}`;
+  try {
+    const parsed = await callDeepSeek(systemPrompt, userPrompt);
+    const list = parsed.questions || [];
+    if (!list.length) throw new Error("لا أسئلة");
+    return list.slice(0, count).map(q => {
+      const optAr = q.options_ar || q.options || [];
+      const optEn = q.options_en || [];
+      const dAr = q.distractor_reasons_ar || [];
+      const dEn = q.distractor_reasons_en || [];
+      let dArIdx = 0, dEnIdx = 0;
+      const options = optAr.map((textAr, i) => {
+        const isCorrect = i === q.correctIndex;
+        const reasonAr = isCorrect ? '' : (dAr[dArIdx] || '');
+        const reasonEn = isCorrect ? '' : (dEn[dEnIdx] || '');
+        if (!isCorrect){ dArIdx++; dEnIdx++; }
+        return {
+          text: { ar: textAr, en: optEn[i] || '' },
+          correct: isCorrect,
+          reason: { ar: reasonAr, en: reasonEn }
+        };
+      });
+      return {
+        type:'mcq',
+        question: { ar: q.question_ar || '', en: q.question_en || '' },
+        options,
+        correctIndex: q.correctIndex,
+        explanation: { ar: q.explanation_ar || '', en: q.explanation_en || '' }
+      };
+    });
+  } catch (err){
+    console.warn("MCQ error:", err);
+    toast("⚠️ توليد محلي");
+    return generateMCQ(source, count);
+  }
+}
+
+async function mockGenerateEssays({ source, count, mode }){
+  if (!DEEPSEEK_ENABLED){ await sleep(1500); return generateEssays(source, count); }
+  const systemPrompt = `You are a multilingual essay designer (Arabic + English). Return ONLY valid JSON.`;
+  const userPrompt =
+`From the reference text below, generate ${count} essay/open-ended questions.
+
+Reference text:
+"""
+${source.slice(0, 6000)}
+"""
+
+Question language: ${langLabelOf()}
+${langInstructionOf()}
+${diffInstructionOf()}
+
+⚠️ modelAnswer_ar / modelAnswer_en must be COMPREHENSIVE (4-6 lines).
+
+Return ONLY this JSON:
+{
+  "questions": [
+    {
+      "question_ar": "نص السؤال",
+      "question_en": "Question",
+      "hint_ar": "تلميح",
+      "hint_en": "Hint",
+      "expected": ["فكرة1","فكرة2","فكرة3","فكرة4","فكرة5"],
+      "modelAnswer_ar": "إجابة نموذجية وافية.",
+      "modelAnswer_en": "Comprehensive model answer."
+    }
+  ]
+}`;
+  try {
+    const parsed = await callDeepSeek(systemPrompt, userPrompt);
+    const list = parsed.questions || [];
+    if (!list.length) throw new Error("لا أسئلة");
+    return list.slice(0, count).map(q => ({
+      type:'essay',
+      question: { ar: q.question_ar || '', en: q.question_en || '' },
+      hint: { ar: q.hint_ar || '', en: q.hint_en || '' },
+      expected: (q.expected || []).map(w => ({ word: w, stem: stem(w) })),
+      modelAnswer: { ar: q.modelAnswer_ar || '', en: q.modelAnswer_en || '' }
+    }));
+  } catch (err){
+    console.warn("Essay error:", err);
+    toast("⚠️ توليد محلي");
+    return generateEssays(source, count);
+  }
+}
+
+function reasonForDistractor(d, sentences, currentSent){
+  const ev = sentences.find(s => s !== currentSent && tokens(s).some(t => sameIdea(stem(t), d.stem)));
+  return {
+    ar: ev ? `صحيح علمياً لكنه يخص سياقاً آخر: «${trim(ev, 90)}»` : `لا يرتبط مباشرة بالمعنى المطلوب.`,
+    en: ev ? `Scientifically correct but belongs to a different context.` : `Does not directly relate.`
+  };
+}
+function generateMCQ(source, count){
+  const sentences = splitSentences(source).filter(s => tokens(s).length >= 6);
+  if (!sentences.length) return [];
+  const allKw = extractKeywords(source).filter(k => k.stem.length >= 4);
+  const picked = shuffle(sentences).slice(0, count);
+  const out = [];
+  picked.forEach(sent => {
+    const toks = tokens(sent);
+    const kwInSent = extractKeywords(sent).filter(k => k.stem.length >= 4);
+    let ans = null, idx = -1;
+    for (const k of kwInSent){
+      const i = toks.findIndex(t => stem(t) === k.stem);
+      if (i > -1){ ans = { stem: k.stem, word: cleanWord(toks[i]) }; idx = i; break; }
+    }
+    if (!ans || idx < 0) return;
+    const sentStems = new Set(toks.map(t => stem(t)));
+    const distractors = [];
+    for (const k of shuffle(allKw)){
+      if (distractors.length >= 3) break;
+      if (sameIdea(k.stem, ans.stem)) continue;
+      if (sentStems.has(k.stem)) continue;
+      if (distractors.some(d => sameIdea(d.stem, k.stem))) continue;
+      distractors.push(k);
+    }
+    if (distractors.length < 3) return;
+    const blankTokens = [...toks]; blankTokens[idx] = '________';
+    const options = shuffle([
+      { text: { ar: ans.word, en: ans.word }, correct: true, reason: { ar:'', en:'' } },
+      ...distractors.map(d => ({
+        text: { ar: d.word, en: d.word },
+        correct: false,
+        reason: reasonForDistractor(d, sentences, sent)
+      }))
+    ]);
+    out.push({
+      type:'mcq',
+      question: { ar: `أكمل العبارة:\n«${blankTokens.join(' ')}»`, en: 'Complete the sentence.' },
+      options,
+      correctIndex: options.findIndex(o => o.correct),
+      explanation: {
+        ar: `النص: «${sent}». الكلمة الصحيحة «${ans.word}».`,
+        en: `Text: "${sent}". Correct term: "${ans.word}".`
+      }
+    });
+  });
+  return out;
+}
+function generateEssays(source, count){
+  const sentences = splitSentences(source).filter(s => tokens(s).length >= 7);
+  const picked = shuffle(sentences).slice(0, count);
+  const templates = [
+    k => ({ ar: `اشرح بأسلوبك: ما المقصود بـ «${k}»؟`, en: `Explain: what is "${k}"?` }),
+    k => ({ ar: `تحدّث عن «${k}» وبيّن أهميته.`, en: `Discuss "${k}" and its importance.` }),
+    k => ({ ar: `لماذا يُعدّ «${k}» مهماً؟`, en: `Why is "${k}" important?` })
+  ];
+  return picked.map((sent, i) => {
+    const kws = extractKeywords(sent).slice(0, 7);
+    if (!kws.length) return null;
+    return {
+      type:'essay',
+      question: templates[i % templates.length](kws[0].word),
+      hint: { ar: `الفكرة في النص: «${trim(tokens(sent).slice(0,7).join(' '), 70)}...»`, en: `Idea in text.` },
+      expected: kws,
+      modelAnswer: { ar: sent, en: sent }
+    };
+  }).filter(Boolean);
+}
+function computeEvaluation({ answer, expected, model, mode }){
+  const modelText = typeof model === 'string' ? model : (model?.ar || model?.en || '');
+  const { matched, missing } = matchKeywords(answer, expected);
+  const words = tokens(answer).length;
+  const copy = similarity(answer, modelText);
+  const ratio = expected.length ? matched.length / expected.length : 0;
+  let score = Math.round(ratio * 10);
+  if (words < 6) score = Math.min(score, 3);
+  score = Math.max(0, Math.min(10, score));
+  const colorClass = score >= 8 ? 'good' : score >= 5 ? 'warn' : 'bad';
+  const ring = score >= 8 ? '#5c7a4a' : score >= 5 ? '#b8860b' : '#a83232';
+  const statusAr = score >= 8 ? '✅ ممتازة' : score >= 5 ? '⚠️ جزئية' : '❌ غير مكتملة';
+  const statusEn = score >= 8 ? '✅ Excellent' : score >= 5 ? '⚠️ Partial' : '❌ Incomplete';
+  let wAr = `غطّيت ${matched.length} من ${expected.length} فكرة. `;
+  if (missing.length) wAr += `لم تذكر: ${missing.map(k => `«${k.word}»`).join('، ')}. `;
+  let wEn = `You covered ${matched.length} of ${expected.length} ideas. `;
+  if (missing.length) wEn += `Missing: ${missing.map(k => `"${k.word}"`).join(', ')}. `;
+  return {
+    status: { ar: statusAr, en: statusEn },
+    score, colorClass, ring,
+    weakness: { ar: wAr, en: wEn },
+    matched, missing,
+    subtitle: {
+      ar: `الدرجة: ${score} / 10 — ${matched.length} مطابقة · ${missing.length} ناقصة`,
+      en: `Score: ${score} / 10 — ${matched.length} matched · ${missing.length} missing`
+    },
+    analysis: {
+      words, matched: matched.length, missing: missing.length,
+      copy: Math.round(copy * 100),
+      note: { ar: 'تقييم محلي.', en: 'Local evaluation.' }
+    }
+  };
+}
+
+/* ================================================================
+   💾 الجلسات السابقة
+   ================================================================ */
+const SESSION_KEY = 'owlix_sessions';
+const MAX_SESSIONS = 20;
+
+function loadSessions(){
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){ return []; }
+}
+function persistSessions(sessions){
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(sessions));
+    updateHistoryBadge();
+    return true;
+  } catch(e){
+    console.warn('Session save failed:', e);
+    return false;
+  }
+}
+function updateHistoryBadge(){
+  const count = loadSessions().length;
+  const el = $('#historyTabBadge');
+  if (!el) return;
+  if (count > 0){ el.textContent = count > 99 ? '99+' : count; el.hidden = false; }
+  else el.hidden = true;
+}
+function saveCurrentSession(){
+  if (!quizResultsStore.length && !essayResultsStore.length) return null;
+  const mcqCorrect = quizState.correct;
+  const mcqTotal = quizState.total;
+  const mcqPct = mcqTotal ? Math.round(mcqCorrect / mcqTotal * 100) : 0;
+  const essayAvg = essayResultsStore.length
+    ? Math.round((essayResultsStore.reduce((s,e)=>s+e.result.score, 0) / essayResultsStore.length) * 10) / 10
+    : 0;
+  const parts = [];
+  if (mcqTotal > 0) parts.push(mcqPct / 10);
+  if (essayResultsStore.length > 0) parts.push(essayAvg);
+  const overall = parts.length ? Math.round((parts.reduce((a,b)=>a+b,0) / parts.length) * 10) / 10 : 0;
+  const session = {
+    id: 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    timestamp: Date.now(),
+    sourcePreview: els.sourceText.value.trim().slice(0, 200),
+    mode: MODE,
+    difficulty: DIFFICULTY,
+    lang: QUESTION_LANG,
+    quizResults: quizResultsStore.map(r => ({
+      index: r.index, question: r.question, options: r.options,
+      chosenIndex: r.chosenIndex, correctIndex: r.correctIndex,
+      explanation: r.explanation, wasCorrect: r.wasCorrect
+    })),
+    essayResults: essayResultsStore.map(e => ({
+      index: e.index, question: e.question, answer: e.answer, result: e.result
+    })),
+    quizState: { correct: quizState.correct, total: quizState.total, answered: quizState.answered },
+    overall, mcqCorrect, mcqTotal, mcqPct, essayAvg
+  };
+  const sessions = loadSessions();
+  sessions.unshift(session);
+  if (sessions.length > MAX_SESSIONS) sessions.length = MAX_SESSIONS;
+  persistSessions(sessions);
+  return session.id;
+}
+function deleteSession(id){
+  const sessions = loadSessions().filter(s => s.id !== id);
+  persistSessions(sessions);
+  renderHistory();
+  toast('🗑 تم حذف الجلسة');
+}
+function getSession(id){
+  return loadSessions().find(s => s.id === id);
+}
+function renderHistory(){
+  const sessions = loadSessions();
+  const body = $('#historyBody');
+  if (!sessions.length){
+    body.innerHTML = `
+      <div class="res-empty">
+        <div style="font-size:3rem;margin-bottom:12px">📭</div>
+        <div style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--txt-2)">لا توجد جلسات محفوظة</div>
+        <div style="font-size:.85rem;line-height:1.8;margin-bottom:18px">أكمل اختباراً ليُحفظ تلقائياً هنا.</div>
+        <button class="btn" id="btnGoHomeFromHistory">🏠 اذهب للرئيسية</button>
+      </div>`;
+    const b = document.getElementById('btnGoHomeFromHistory');
+    if (b) b.addEventListener('click', () => showTab('main'));
+    return;
+  }
+  body.innerHTML = sessions.map(s => {
+    const dateStr = formatArabicDate(s.timestamp);
+    const scoreClass = s.overall >= 8 ? 'green' : s.overall >= 5 ? 'amber' : 'red';
+    const questionsCount = (s.quizState?.total || 0) + (s.essayResults?.length || 0);
+    const diffLabel = { easy:'🟢 سهل', medium:'🟡 متوسط', hard:'🔴 صعب' }[s.difficulty] || '🟡 متوسط';
+    const langLabel = { ar:'عربي', en:'English', both:'الاثنان' }[s.lang] || 'عربي';
+    const preview = (s.sourcePreview || '').replace(/\n/g, ' ').slice(0, 90);
+    return `
+      <div class="session-card">
+        <div class="session-head">
+          <div class="session-date">📅 ${escapeHtml(dateStr)}</div>
+          <div class="session-score ${scoreClass}">${s.overall}/10</div>
+        </div>
+        <div class="session-preview">${escapeHtml(preview)}${preview.length >= 90 ? '...' : ''}</div>
+        <div class="session-meta">
+          <span class="meta-pill">📝 ${questionsCount} سؤال</span>
+          <span class="meta-pill">${diffLabel}</span>
+          <span class="meta-pill">🌐 ${langLabel}</span>
+          <span class="meta-pill ${s.mode === 'strict' ? 'strict' : 'flexible'}">${s.mode === 'strict' ? '⚖️ صارم' : '🕊️ مرن'}</span>
+        </div>
+        <div class="session-actions">
+          <button class="btn sm ghost" data-action="view" data-id="${s.id}">👁 عرض</button>
+          <button class="btn sm" data-action="pdf" data-id="${s.id}">📄 PDF</button>
+          <button class="btn sm del" data-action="delete" data-id="${s.id}">🗑 حذف</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+let SAVED_STATE_BACKUP = null;
+let cameFromHistory = false;
+
+function viewSavedSession(id){
+  const s = getSession(id);
+  if (!s) return;
+  SAVED_STATE_BACKUP = {
+    quizResultsStore: quizResultsStore,
+    essayResultsStore: essayResultsStore,
+    quizState: { ...quizState },
+    expectedEssayCount, evaluatedEssayCount
+  };
+  quizResultsStore = s.quizResults || [];
+  essayResultsStore = s.essayResults || [];
+  quizState = {
+    answered: s.quizState?.answered || 0,
+    correct: s.quizState?.correct || 0,
+    total: s.quizState?.total || 0
+  };
+  cameFromHistory = true;
+  els.resultsView.hidden = false;
+  els.resultsView.style.display = '';
+  els.bottomTabs.classList.add('hidden');
+  hideAllTabs();
+  buildResultsView();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restoreBackup(){
+  if (!SAVED_STATE_BACKUP) return;
+  quizResultsStore = SAVED_STATE_BACKUP.quizResultsStore;
+  essayResultsStore = SAVED_STATE_BACKUP.essayResultsStore;
+  quizState = SAVED_STATE_BACKUP.quizState;
+  expectedEssayCount = SAVED_STATE_BACKUP.expectedEssayCount;
+  evaluatedEssayCount = SAVED_STATE_BACKUP.evaluatedEssayCount;
+  SAVED_STATE_BACKUP = null;
+}
+
+function exportSessionToPDF(id){
+  const s = getSession(id);
+  if (!s) return;
+  const dateStr = formatArabicDate(s.timestamp);
+  const questionsCount = (s.quizState?.total || 0) + (s.essayResults?.length || 0);
+  const gradeAr = s.overall >= 9 ? '🌟 ممتاز' : s.overall >= 8 ? '✨ جيد جداً' :
+    s.overall >= 6.5 ? '👍 جيد' : s.overall >= 5 ? '📖 مقبول' :
+    s.overall >= 3 ? '⚠️ ضعيف' : '❌ يحتاج مراجعة';
+  let html = `
+    <div class="pdf-header">
+      <h1>🦉 OWLIX — تقرير الجلسة</h1>
+      <div class="pdf-date">${escapeHtml(dateStr)}</div>
+    </div>
+    <div class="pdf-summary">
+      <div class="pdf-score">${s.overall}/10</div>
+      <div class="pdf-grade">${gradeAr}</div>
+      <div class="pdf-stats">
+        <span>✅ MCQ: ${s.mcqCorrect}/${s.mcqTotal} (${s.mcqPct}%)</span>
+        <span>✍️ المقالي: ${s.essayAvg}/10</span>
+        <span>📊 المجموع: ${questionsCount} سؤال</span>
+      </div>
+    </div>`;
+  const wrong = (s.quizResults || []).filter(r => !r.wasCorrect);
+  if (wrong.length){
+    html += `<h2>❌ الأخطاء في MCQ (${wrong.length})</h2>`;
+    wrong.forEach(r => {
+      const q = r.question.ar || r.question.en || '';
+      const wrongAns = r.options[r.chosenIndex]?.text?.ar || r.options[r.chosenIndex]?.text?.en || '';
+      const rightAns = r.options[r.correctIndex]?.text?.ar || r.options[r.correctIndex]?.text?.en || '';
+      html += `
+        <div class="pdf-mistake">
+          <div class="pdf-q"><b>سؤال ${r.index + 1}:</b> ${escapeHtml(q)}</div>
+          <div class="pdf-wrong">✘ إجابتك: ${escapeHtml(wrongAns)}</div>
+          <div class="pdf-correct">✓ الصحيحة: ${escapeHtml(rightAns)}</div>
+          ${r.explanation?.ar ? `<div class="pdf-explanation">📖 ${escapeHtml(r.explanation.ar)}</div>` : ''}
+        </div>`;
+    });
+  }
+  if ((s.essayResults || []).length){
+    html += `<h2>✍️ الإجابات المقالية (${s.essayResults.length})</h2>`;
+    s.essayResults.forEach(e => {
+      const q = e.question.ar || e.question.en || '';
+      html += `
+        <div class="pdf-essay">
+          <div class="pdf-q"><b>سؤال ${e.index + 1}:</b> ${escapeHtml(q)}</div>
+          <div class="pdf-answer"><b>إجابتك:</b> ${escapeHtml(e.answer || '')}</div>
+          <div class="pdf-score-line">الدرجة: <b>${e.result?.score || 0}/10</b></div>
+          ${e.result?.weakness?.ar ? `<div class="pdf-feedback">📝 ${escapeHtml(e.result.weakness.ar)}</div>` : ''}
+        </div>`;
+    });
+  }
+  const w = window.open('', '_blank');
+  if (!w){ toast('⚠️ يرجى السماح بالنوافذ المنبثقة'); return; }
+  w.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+      <meta charset="UTF-8">
+      <title>OWLIX — تقرير الجلسة</title>
+      <style>
+        * { box-sizing: border-box; }
+        body { font-family: "Segoe UI","Tajawal",Tahoma,sans-serif; padding: 30px; color: #2c2c2c;
+               line-height: 1.8; max-width: 800px; margin: 0 auto; background: #fff; }
+        h1 { color: #8b5a2b; text-align: center; margin-bottom: 8px; font-size: 26px; }
+        h2 { color: #8b3a3a; margin: 24px 0 12px; font-size: 17px; border-bottom: 2px solid #ddd; padding-bottom: 6px; }
+        .pdf-header { text-align: center; border-bottom: 3px double #8b5a2b; padding-bottom: 16px; margin-bottom: 20px; }
+        .pdf-date { color: #666; font-size: 13px; }
+        .pdf-summary { background: #faf4e3; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 24px; border: 1px solid #e0d0a0; }
+        .pdf-score { font-size: 46px; font-weight: 900; color: #8b5a2b; line-height: 1; }
+        .pdf-grade { font-size: 16px; font-weight: 700; margin: 8px 0 14px; }
+        .pdf-stats { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; font-size: 13px; color: #444; }
+        .pdf-mistake, .pdf-essay { background: #fafafa; border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 12px; page-break-inside: avoid; }
+        .pdf-q { margin-bottom: 8px; color: #333; font-size: 14px; }
+        .pdf-wrong { color: #a83232; margin: 5px 0; padding: 7px 11px; background: #fdeaea; border-radius: 6px; font-size: 13px; }
+        .pdf-correct { color: #5c7a4a; margin: 5px 0; padding: 7px 11px; background: #eaf3ea; border-radius: 6px; font-size: 13px; }
+        .pdf-explanation { color: #555; font-size: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ccc; line-height: 1.9; }
+        .pdf-answer { background: #f5ebd4; padding: 9px 12px; border-radius: 6px; margin: 8px 0; font-size: 13px; line-height: 1.8; }
+        .pdf-score-line { font-size: 14px; margin: 6px 0; }
+        .pdf-feedback { font-size: 12px; color: #666; padding-top: 8px; border-top: 1px dashed #ccc; line-height: 1.9; }
+        @media print { body { padding: 10px; } }
+      </style>
+    </head>
+    <body>${html}</body>
+    </html>`);
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 500);
+}
+
+/* ================================================================
+   💾 حالة التطبيق
+   ================================================================ */
+let MODE = 'flexible';
+let quizState = { answered: 0, correct: 0, total: 0 };
+let quizResultsStore = [];
+let essayResultsStore = [];
+let expectedEssayCount = 0;
+let evaluatedEssayCount = 0;
+let lastQuizQuestions = [];
+let lastEssayQuestions = [];
+let sessionSavedForCurrent = false;
+let currentTab = 'main';
+let currentPlatform = detectPlatform();
+
+const els = {
+  sourceText: $('#sourceText'), fileInput: $('#fileInput'), dropzone: $('#dropzone'),
+  stats: $('#stats'), kwCloud: $('#kwCloud'), btnSample: $('#btnSample'),
+  modeToggle: $('#modeToggle'), modeDesc: $('#modeDesc'),
+  typeMCQ: $('#typeMCQ'), typeEssay: $('#typeEssay'),
+  langRow: $('#langRow'), langNote: $('#langNote'),
+  difficultyRow: $('#difficultyRow'), diffNote: $('#diffNote'),
+  qCount: $('#qCount'), presets: $('#presets'),
+  btnGenerate: $('#btnGenerate'),
+  quizCard: $('#card-quiz'), essayCard: $('#card-essay'),
+  quizBody: $('#quizBody'), essayBody: $('#essayBody'),
+  quizScore: $('#quizScore'), quizMsg: $('#quizMsg'),
+  mainView: $('#mainView'), quizView: $('#quizView'),
+  historyView: $('#historyView'), updateView: $('#updateView'),
+  resultsView: $('#resultsView'),
+  quizEmpty: $('#quizEmpty'),
+  resultsBody: $('#resultsBody'), historyBody: $('#historyBody'),
+  bottomTabs: $('#bottomTabs'),
+  fab: $('#fabResults'), fabBadge: $('#fabBadge')
+};
+
+function hideAllTabs(){
+  els.mainView.hidden = true; els.mainView.style.display = 'none';
+  els.quizView.hidden = true; els.quizView.style.display = 'none';
+  els.historyView.hidden = true; els.historyView.style.display = 'none';
+  els.updateView.hidden = true; els.updateView.style.display = 'none';
+  els.resultsView.hidden = true; els.resultsView.style.display = 'none';
+}
+
+function showTab(name){
+  currentTab = name;
+  hideAllTabs();
+  if (name === 'main'){
+    els.mainView.hidden = false;
+    els.mainView.style.display = '';
+  } else if (name === 'quiz'){
+    els.quizView.hidden = false;
+    els.quizView.style.display = '';
+  } else if (name === 'history'){
+    els.historyView.hidden = false;
+    els.historyView.style.display = '';
+    renderHistory();
+  } else if (name === 'update'){
+    els.updateView.hidden = false;
+    els.updateView.style.display = '';
+    refreshUpdateUI();
+  }
+  els.bottomTabs.classList.remove('hidden');
+  $$('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  if (name === 'quiz'){
+    updateFab();
+  } else {
+    els.fab.classList.remove('show', 'complete');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+$$('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.tab === currentTab) return;
+    showTab(btn.dataset.tab);
+  });
+});
+
+function updateStats(){
+  const t = els.sourceText.value.trim();
+  const words = t ? tokens(t).length : 0;
+  const kws = t ? extractKeywords(t) : [];
+  els.stats.textContent = `${words} كلمة · ${kws.length} كلمة مفتاحية`;
+  els.kwCloud.innerHTML = kws.slice(0, 12)
+    .map((k, i) => `<span class="chip" style="animation-delay:${i*35}ms">${escapeHtml(k.word)}</span>`).join('');
+}
+els.sourceText.addEventListener('input', updateStats);
+
+$('#useOCR').addEventListener('change', e => {
+  const fastLabel = document.querySelector('.fast-label');
+  const accLabel = document.querySelector('.accurate-label');
+  if (e.target.checked){
+    fastLabel.classList.remove('active');
+    accLabel.classList.add('active');
+    toast('🔍 الوضع الدقيق');
+  } else {
+    fastLabel.classList.add('active');
+    accLabel.classList.remove('active');
+    toast('⚡ الوضع السريع');
+  }
+});
+
+$('#btnCancelProcessing').addEventListener('click', () => {
+  if (!PROCESSING.active) return;
+  PROCESSING.cancelled = true;
+  $('#processingText').textContent = '⏹ جاري الإيقاف...';
+  toast('⏹ تم إرسال أمر الإيقاف');
+});
+
+async function readFile(file){
+  if (!file) return;
+  const name = file.name.toLowerCase();
+  els.dropzone.classList.add('busy');
+  PROCESSING = { active: true, cancelled: false };
+  $('#processingBar').hidden = false;
+  $('#processingText').textContent = '⏳ جاري القراءة...';
+  try {
+    if (/\.pdf$/.test(name)){
+      pdfPages = await extractPdfPages(file);
+      if (!pdfPages.length) throw new Error('لم يُستخرج نص');
+      const totalChars = pdfPages.reduce((s, p) => s + p.text.length, 0);
+      if (totalChars < 30) throw new Error('النص المستخرج قصير جداً');
+      setupPdfFilter();
+      applyFilterAndUpdate();
+      toast(`✅ تم استخراج ${pdfPages.length} صفحة`);
+    }
+    else if (/\.(txt|md|csv|json|rtf)$/i.test(name)){
+      const text = await file.text();
+      els.sourceText.value = text.slice(0, 30000);
+      pdfPages = [];
+      $('#pdfFilter').hidden = true;
+      updateStats();
+      toast('✅ تم التحميل');
+    } else throw new Error('صيغة غير مدعومة');
+  } catch (err){
+    if (err.message === 'CANCELLED'){
+      toast('⏹ تم إيقاف المعالجة');
+    } else {
+      console.error(err);
+      toast('❌ ' + (err.message || 'فشل'));
+    }
+  } finally {
+    PROCESSING.active = false;
+    PROCESSING.cancelled = false;
+    els.dropzone.classList.remove('busy');
+    $('#processingBar').hidden = true;
+    updateStats();
+  }
+}
+els.dropzone.addEventListener('click', () => els.fileInput.click());
+els.fileInput.addEventListener('change', e => readFile(e.target.files[0]));
+['dragenter','dragover'].forEach(ev => els.dropzone.addEventListener(ev, e => { e.preventDefault(); els.dropzone.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => els.dropzone.addEventListener(ev, e => { e.preventDefault(); els.dropzone.classList.remove('over'); }));
+els.dropzone.addEventListener('drop', e => readFile(e.dataTransfer.files[0]));
+
+$('#filterMode').addEventListener('click', e => {
+  const b = e.target.closest('button[data-fmode]');
+  if (!b) return;
+  currentFilter.mode = b.dataset.fmode;
+  $$('#filterMode button').forEach(x => x.classList.toggle('active', x === b));
+  $('#rangePanel').hidden = currentFilter.mode !== 'range';
+  $('#unitPanel').hidden  = currentFilter.mode !== 'unit';
+  currentFilter.unitRange = null;
+  $('#fromPage').value = 1;
+  $('#toPage').value = pdfPages.length;
+  $('#unitStatus').hidden = true;
+  if (currentFilter.mode === 'unit') setTimeout(() => $('#unitInput').focus(), 100);
+  applyFilterAndUpdate();
+});
+$('#fromPage').addEventListener('change', applyFilterAndUpdate);
+$('#toPage').addEventListener('change', applyFilterAndUpdate);
+$('#unitInput').addEventListener('input', updateUnitBtnState);
+$('#unitInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); searchUnit(); } });
+$('#unitSearchBtn').addEventListener('click', searchUnit);
+
+function searchUnit(){
+  const q = $('#unitInput').value.trim();
+  if (q.length < 2) return;
+  const status = $('#unitStatus');
+  status.hidden = false;
+  const range = findUnitRange(q);
+  if (!range){
+    currentFilter.unitRange = null;
+    status.className = 'unit-status err';
+    status.innerHTML = `❌ لم يتم العثور على «<b>${escapeHtml(q)}</b>».`;
+    return;
+  }
+  currentFilter.unitRange = range;
+  status.className = 'unit-status ok';
+  status.innerHTML = `✅ «<b>${escapeHtml(range.title)}</b>» — ص${range.startPage}–${range.endPage}`;
+  applyFilterAndUpdate();
+  toast('✅ تم استخراج الوحدة');
+}
+
+els.btnSample.addEventListener('click', () => {
+  pdfPages = [];
+  $('#pdfFilter').hidden = true;
+  els.sourceText.value =
+`يُعدّ التخطيط للدرس من أهم مهارات المعلم، فهو يحدد الأهداف التعليمية والوسائل والأنشطة التي ستُستخدم داخل الصف.
+ويقوم التخطيط الجيد على معرفة خصائص الطلبة ومستوياتهم وقدراتهم السابقة.
+أما طريقة التدريس فهي الأسلوب الذي يتبعه المعلم في إيصال المحتوى إلى المتعلمين، وتتنوع بين الطريقة الاستقرائية والطريقة الاستنتاجية وطريقة حل المشكلات.
+ويؤدي استخدام الوسائل التعليمية إلى زيادة التفاعل والانتباه لدى الطلبة.
+كما يساعد التقويم المستمر على قياس مدى تحقق الأهداف ومعالجة الضعف أولاً بأول.
+ويحتاج المعلم الناجح إلى مهارة إدارة الصف لضمان بيئة تعليمية منظمة ومحفزة.`;
+  updateStats();
+  toast('📚 تم إدراج النص');
+});
+
+els.modeToggle.addEventListener('click', () => {
+  const strict = !els.modeToggle.classList.contains('on');
+  els.modeToggle.classList.toggle('on', strict);
+  els.modeToggle.setAttribute('aria-checked', String(strict));
+  MODE = strict ? 'strict' : 'flexible';
+  $$('.t-label').forEach(l => l.classList.toggle('active', l.dataset.mode === MODE));
+  els.modeDesc.textContent = strict
+    ? 'الوضع الصارم: الالتزام الحرفي بالنص.'
+    : 'الوضع المرن: يقبل أي إضافة صحيحة علمياً.';
+});
+
+els.langRow.addEventListener('click', e => {
+  const b = e.target.closest('.lang-btn');
+  if (!b) return;
+  QUESTION_LANG = b.dataset.lang;
+  $$('.lang-btn', els.langRow).forEach(x => x.classList.toggle('active', x === b));
+  els.langNote.textContent = langNoteOf();
+  toast('🌐 ' + langLabelOf());
+});
+
+els.difficultyRow.addEventListener('click', e => {
+  const b = e.target.closest('.diff-btn');
+  if (!b) return;
+  DIFFICULTY = b.dataset.diff;
+  $$('.diff-btn', els.difficultyRow).forEach(x => x.classList.toggle('active', x === b));
+  els.diffNote.textContent = diffNoteOf();
+  toast('🎯 مستوى ' + diffLabelOf());
+});
+
+$$('.num-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const step = Number(btn.dataset.step);
+    let v = (Number(els.qCount.value) || 5) + step;
+    v = Math.max(1, Math.min(30, v));
+    els.qCount.value = v;
+    syncPresets();
+  });
+});
+els.qCount.addEventListener('input', () => {
+  let v = Number(els.qCount.value) || 1;
+  v = Math.max(1, Math.min(30, v));
+  if (String(v) !== els.qCount.value) els.qCount.value = v;
+  syncPresets();
+});
+function syncPresets(){
+  const v = String(Number(els.qCount.value) || '');
+  $$('#presets button').forEach(b => b.classList.toggle('active', b.dataset.preset === v));
+}
+els.presets.addEventListener('click', e => {
+  const b = e.target.closest('button[data-preset]');
+  if (!b) return;
+  els.qCount.value = b.dataset.preset;
+  syncPresets();
+});
+
+els.btnGenerate.addEventListener('click', async () => {
+  const source = els.sourceText.value.trim();
+  if (source.length < 60){ toast('⚠️ أدخل نصاً مرجعياً كافياً'); return; }
+  const wantMCQ = els.typeMCQ.checked;
+  const wantEssay = els.typeEssay.checked;
+  if (!wantMCQ && !wantEssay){ toast('⚠️ اختر نوع الأسئلة'); return; }
+  const total = Math.max(1, Math.min(30, Number(els.qCount.value) || 5));
+  let mcqCount = 0, essayCount = 0;
+  if (wantMCQ && wantEssay){ mcqCount = Math.ceil(total / 2); essayCount = total - mcqCount; }
+  else if (wantMCQ){ mcqCount = total; }
+  else { essayCount = total; }
+
+  quizResultsStore = []; essayResultsStore = [];
+  quizState = { answered: 0, correct: 0, total: 0 };
+  expectedEssayCount = essayCount;
+  evaluatedEssayCount = 0;
+  lastQuizQuestions = []; lastEssayQuestions = [];
+  sessionSavedForCurrent = false;
+
+  els.btnGenerate.disabled = true;
+  els.btnGenerate.textContent = `⏳ جارٍ التوليد (${total} سؤال)...`;
+
+  showTab('quiz');
+  els.quizEmpty.hidden = true;
+
+  if (mcqCount > 0){
+    els.quizCard.hidden = false;
+    els.quizBody.innerHTML = `<div class="result-panel scanning">${scannerHTML('يولّد MCQ...')}</div>`;
+    els.quizScore.textContent = '0 / 0';
+    els.quizMsg.textContent = 'جارٍ التحضير...';
+  } else els.quizCard.hidden = true;
+  if (essayCount > 0){
+    els.essayCard.hidden = false;
+    els.essayBody.innerHTML = `<div class="result-panel scanning">${scannerHTML('يصيغ المقالي...')}</div>`;
+  } else els.essayCard.hidden = true;
+
+  try {
+    const tasks = [];
+    if (mcqCount > 0) tasks.push(mockGenerateQuiz({ source, count: mcqCount, mode: MODE }));
+    if (essayCount > 0) tasks.push(mockGenerateEssays({ source, count: essayCount, mode: MODE }));
+    const results = await Promise.all(tasks);
+    let ri = 0;
+    if (mcqCount > 0){
+      const qs = results[ri++];
+      if (qs && qs.length) renderQuiz(qs);
+      else els.quizBody.innerHTML = `<div class="result-panel warn"><p>تعذّر التوليد.</p></div>`;
+    }
+    if (essayCount > 0){
+      const qs = results[ri++];
+      if (qs && qs.length) renderEssays(qs);
+      else els.essayBody.innerHTML = `<div class="result-panel warn"><p>تعذّر التوليد.</p></div>`;
+    }
+    toast('✅ تم التوليد');
+    updateFab();
+  } catch (err){
+    console.error(err);
+    toast('❌ فشل التوليد: ' + err.message);
+  } finally {
+    els.btnGenerate.disabled = false;
+    els.btnGenerate.textContent = '🚀 توليد الأسئلة الآن';
+  }
+});
+
+$('#btnGoHomeFromQuiz').addEventListener('click', () => showTab('main'));
+
+function renderQuiz(questions){
+  questions.forEach(q => shuffleQuestionOptions(q));
+  lastQuizQuestions = questions;
+  quizState = { answered: 0, correct: 0, total: questions.length };
+  els.quizBody.innerHTML = '';
+  updateQuizProgress();
+  els.quizMsg.textContent = `${questions.length} أسئلة — اختر الإجابة`;
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.style.animationDelay = (i * 70) + 'ms';
+    card.innerHTML = `
+      <div class="q-head">
+        <span class="q-num">س${i + 1}</span>
+        <div class="q-text">${questionHtml(q.question)}</div>
+      </div>
+      <div class="options"></div>
+      <div class="explain" hidden></div>`;
+    const opts = $('.options', card);
+    q.options.forEach((o, j) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.innerHTML = `<span class="opt-key">${['أ','ب','ج','د'][j]}</span><span class="opt-text">${questionHtml(o.text)}</span>`;
+      btn.addEventListener('click', () => answerMCQ(card, q, j, i));
+      opts.appendChild(btn);
+    });
+    els.quizBody.appendChild(card);
+  });
+}
+function answerMCQ(card, q, chosen, index){
+  if (card.dataset.done) return;
+  card.dataset.done = '1';
+  const optionEls = $$('.option', card);
+  optionEls.forEach((b, j) => {
+    b.disabled = true;
+    if (j === chosen) b.classList.add('selected');
+  });
+  const ok = q.options[chosen].correct;
+  quizState.answered++;
+  if (ok) quizState.correct++;
+  quizResultsStore.push({
+    index, question: q.question, options: q.options,
+    chosenIndex: chosen, correctIndex: q.correctIndex,
+    explanation: q.explanation, wasCorrect: ok
+  });
+  const ex = $('.explain', card);
+  ex.hidden = false;
+  ex.classList.add('saved-explanation');
+  ex.innerHTML = `
+    <div class="saved-msg">
+      <span class="check">✓</span>
+      <span>تم تسجيل إجابتك — النتيجة في النهاية.</span>
+    </div>`;
+  updateQuizProgress();
+  updateFab();
+}
+function updateQuizProgress(){
+  els.quizScore.textContent = `${quizState.answered} / ${quizState.total}`;
+  if (quizState.total && quizState.answered === quizState.total){
+    els.quizMsg.textContent = '✅ أكملت جميع الأسئلة — اضغط «عرض النتائج»';
+  }
+}
+function renderEssays(items){
+  lastEssayQuestions = items;
+  els.essayBody.innerHTML = '';
+  items.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.style.animationDelay = (i * 70) + 'ms';
+    card.innerHTML = `
+      <div class="q-head">
+        <span class="q-num">${i + 1}</span>
+        <div class="q-text">${questionHtml(q.question)}</div>
+      </div>
+      <div class="q-hint">${questionHtml(q.hint)}</div>
+      <textarea rows="4" placeholder="اكتب إجابتك بأسلوبك..."></textarea>
+      <div class="meta-row">
+        <span class="wc" style="font-size:.75rem;color:var(--muted)">0 كلمة</span>
+        <button class="btn sm">حفظ الإجابة</button>
+      </div>
+      <div class="result-panel" hidden></div>`;
+    const ta = $('textarea', card);
+    const wc = $('.wc', card);
+    ta.addEventListener('input', () => { wc.textContent = tokens(ta.value).length + ' كلمة'; });
+    $('button', card).addEventListener('click', () => evaluateEssay(card, q, ta.value, i));
+    els.essayBody.appendChild(card);
+  });
+}
+async function evaluateEssay(card, q, answer, index){
+  const host = $('.result-panel', card);
+  if (!answer.trim()){
+    host.hidden = false;
+    host.className = 'result-panel warn';
+    host.innerHTML = '<p>✍️ اكتب إجابتك أولاً.</p>';
+    return;
+  }
+  const btn = $('button', card);
+  btn.disabled = true;
+  btn.textContent = 'جارٍ الحفظ...';
+  host.hidden = false;
+  host.className = 'result-panel scanning';
+  host.innerHTML = scannerHTML('يحلل إجابتك...');
+  const result = await mockEvaluate({
+    source: els.sourceText.value,
+    question: (q.question.ar || q.question.en),
+    answer, expected: q.expected,
+    model: (q.modelAnswer.ar || q.modelAnswer.en), mode: MODE
+  });
+  essayResultsStore.push({ index, question: q.question, answer, result });
+  evaluatedEssayCount++;
+  btn.textContent = '✔ تم الحفظ';
+  host.className = 'result-panel';
+  host.innerHTML = `
+    <div class="essay-saved">
+      <span class="check">✓</span>
+      <span>تم تسجيل إجابتك — النتيجة في النهاية.</span>
+    </div>`;
+  updateFab();
+}
+function updateFab(){
+  if (currentTab !== 'quiz'){ els.fab.classList.remove('show', 'complete'); return; }
+  const mcqDone = quizState.total > 0 && quizState.answered === quizState.total;
+  const essaysDone = expectedEssayCount === 0 ? true : evaluatedEssayCount === expectedEssayCount;
+  const hasAny = quizResultsStore.length > 0 || essayResultsStore.length > 0;
+  const doneCount = quizResultsStore.length + essayResultsStore.length;
+  const totalExpected = (quizState.total || 0) + expectedEssayCount;
+  if (!hasAny){ els.fab.classList.remove('show', 'complete'); return; }
+  els.fab.classList.add('show');
+  const allDone = (quizState.total === 0 || mcqDone) &&
+                  (expectedEssayCount === 0 || essaysDone) && hasAny;
+  if (allDone){
+    els.fab.classList.add('complete');
+    els.fab.querySelector('span').textContent = '🎉 انتهيت! اعرض النتيجة';
+    els.fabBadge.textContent = doneCount + '/' + totalExpected;
+  } else {
+    els.fab.classList.remove('complete');
+    els.fab.querySelector('span').textContent = '📊 عرض النتائج';
+    els.fabBadge.textContent = doneCount + '/' + totalExpected;
+  }
+}
+els.fab.addEventListener('click', showResultsView);
+$('#btnBackMainTop').addEventListener('click', () => {
+  if (cameFromHistory){
+    restoreBackup();
+    cameFromHistory = false;
+    showTab('history');
+  } else {
+    showTab('quiz');
+  }
+});
+$('#btnBackMainBottom').addEventListener('click', () => {
+  if (cameFromHistory){
+    restoreBackup();
+    cameFromHistory = false;
+    showTab('history');
+  } else {
+    showTab('main');
+  }
+});
+$('#btnRetryTop').addEventListener('click', retryAll);
+$('#btnRetryBottom').addEventListener('click', retryAll);
+$('#btnNewQuestionsTop').addEventListener('click', retryWithNewQuestions);
+$('#btnNewQuestionsBottom').addEventListener('click', retryWithNewQuestions);
+$('#btnExportPDF').addEventListener('click', () => {
+  const latest = loadSessions()[0];
+  if (latest) exportSessionToPDF(latest.id);
+});
+$('#btnClearHistory').addEventListener('click', () => {
+  if (!loadSessions().length){ toast('⚠️ لا توجد جلسات'); return; }
+  if (confirm('هل تريد مسح جميع الجلسات المحفوظة؟')) {
+    persistSessions([]);
+    renderHistory();
+    toast('🗑 تم مسح جميع الجلسات');
+  }
+});
+$('#historyBody').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === 'view') viewSavedSession(id);
+  else if (action === 'pdf') exportSessionToPDF(id);
+  else if (action === 'delete'){
+    if (confirm('هل تريد حذف هذه الجلسة؟')) deleteSession(id);
+  }
+});
+
+function showResultsView(){
+  if (!cameFromHistory && !sessionSavedForCurrent){
+    saveCurrentSession();
+    sessionSavedForCurrent = true;
+  }
+  hideAllTabs();
+  els.resultsView.hidden = false;
+  els.resultsView.style.display = '';
+  els.bottomTabs.classList.add('hidden');
+  els.fab.classList.remove('show', 'complete');
+  buildResultsView();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function retryAll(){
+  if (lastQuizQuestions.length === 0 && lastEssayQuestions.length === 0){
+    toast('⚠️ لا توجد أسئلة'); return;
+  }
+  quizResultsStore = []; essayResultsStore = [];
+  quizState = { answered: 0, correct: 0, total: 0 };
+  expectedEssayCount = lastEssayQuestions.length;
+  evaluatedEssayCount = 0;
+  sessionSavedForCurrent = false;
+  if (lastQuizQuestions.length > 0){
+    els.quizCard.hidden = false;
+    renderQuiz(lastQuizQuestions);
+  } else els.quizCard.hidden = true;
+  if (lastEssayQuestions.length > 0){
+    els.essayCard.hidden = false;
+    renderEssays(lastEssayQuestions);
+  } else els.essayCard.hidden = true;
+  els.quizEmpty.hidden = true;
+  showTab('quiz');
+  toast('🔄 بدأت محاولة جديدة');
+}
+async function retryWithNewQuestions(){
+  const source = els.sourceText.value.trim();
+  if (source.length < 60){ toast('⚠️ النص مفقود'); return; }
+  const mcqCount = lastQuizQuestions.length;
+  const essayCount = lastEssayQuestions.length;
+  if (mcqCount === 0 && essayCount === 0){ toast('⚠️ لا توجد إعدادات'); return; }
+  const btns = [$('#btnNewQuestionsTop'), $('#btnNewQuestionsBottom'), $('#btnRetryTop'), $('#btnRetryBottom')];
+  btns.forEach(b => { b.disabled = true; });
+  quizResultsStore = []; essayResultsStore = [];
+  quizState = { answered: 0, correct: 0, total: 0 };
+  evaluatedEssayCount = 0;
+  expectedEssayCount = essayCount;
+  sessionSavedForCurrent = false;
+  els.quizEmpty.hidden = true;
+  if (mcqCount > 0){
+    els.quizCard.hidden = false;
+    els.quizBody.innerHTML = `<div class="result-panel scanning">${scannerHTML('يولّد MCQ جديد...')}</div>`;
+    els.quizScore.textContent = '0 / 0';
+  } else els.quizCard.hidden = true;
+  if (essayCount > 0){
+    els.essayCard.hidden = false;
+    els.essayBody.innerHTML = `<div class="result-panel scanning">${scannerHTML('يصيغ مقالي جديد...')}</div>`;
+  } else els.essayCard.hidden = true;
+  showTab('quiz');
+  toast('🆕 جاري توليد أسئلة جديدة...');
+  try {
+    const tasks = [];
+    if (mcqCount > 0) tasks.push(mockGenerateQuiz({ source, count: mcqCount, mode: MODE }));
+    if (essayCount > 0) tasks.push(mockGenerateEssays({ source, count: essayCount, mode: MODE }));
+    const results = await Promise.all(tasks);
+    let ri = 0;
+    if (mcqCount > 0){
+      const qs = results[ri++];
+      if (qs && qs.length){ lastQuizQuestions = []; renderQuiz(qs); }
+    }
+    if (essayCount > 0){
+      const qs = results[ri++];
+      if (qs && qs.length){ lastEssayQuestions = []; renderEssays(qs); }
+    }
+    toast('✅ تم توليد أسئلة جديدة');
+  } catch (err){
+    console.error(err);
+    toast('❌ فشل: ' + err.message);
+  } finally {
+    btns.forEach(b => { b.disabled = false; });
+  }
+}
+
+function buildResultsView(){
+  const body = els.resultsBody;
+  const mcqTotal = quizState.total;
+  const mcqCorrect = quizState.correct;
+  const mcqPct = mcqTotal ? Math.round(mcqCorrect / mcqTotal * 100) : 0;
+  const wrongMCQ = quizResultsStore.filter(r => !r.wasCorrect);
+  const essayAvg = essayResultsStore.length
+    ? Math.round((essayResultsStore.reduce((s, e) => s + e.result.score, 0) / essayResultsStore.length) * 10) / 10
+    : 0;
+  const parts = [];
+  if (mcqTotal > 0) parts.push(mcqPct / 10);
+  if (essayResultsStore.length > 0) parts.push(essayAvg);
+  const overall = parts.length ? Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 10) / 10 : 0;
+  const ringColor = overall >= 8 ? '#5c7a4a' : overall >= 5 ? '#b8860b' : '#a83232';
+  const gradeAr = overall >= 9 ? '🌟 ممتاز' : overall >= 8 ? '✨ جيد جداً' :
+    overall >= 6.5 ? '👍 جيد' : overall >= 5 ? '📖 مقبول' :
+    overall >= 3 ? '⚠️ ضعيف' : '❌ يحتاج مراجعة';
+  const gradeEn = overall >= 9 ? 'Excellent' : overall >= 8 ? 'Very Good' :
+    overall >= 6.5 ? 'Good' : overall >= 5 ? 'Acceptable' :
+    overall >= 3 ? 'Weak' : 'Needs Review';
+
+  let sumAr = 'قمت بإنجاز ';
+  const pAr = [];
+  if (quizResultsStore.length > 0) pAr.push(`${quizResultsStore.length} سؤال MCQ`);
+  if (essayResultsStore.length > 0) pAr.push(`${essayResultsStore.length} سؤال مقالي`);
+  sumAr += pAr.join(' و ') + '. ';
+  if (wrongMCQ.length === 0 && quizResultsStore.length > 0) sumAr += 'لم تخطئ في أي سؤال اختيار.';
+  else if (wrongMCQ.length > 0) sumAr += `أخطأت في ${wrongMCQ.length} سؤالاً.`;
+  let sumEn = 'You completed ' + pAr.length + ' question(s).';
+
+  let html = `
+    <div class="res-hero">
+      <div class="big-circle" style="--p:${overall * 10};--ring:${ringColor}">
+        <span class="val">${overall}</span>
+        <span class="out">/ 10</span>
+      </div>
+      <div class="res-hero-info">
+        <h2>${gradeAr} / ${gradeEn}</h2>
+        <div class="bilingual" style="margin-top:6px">
+          <div class="ar-side">${nl2br(sumAr)}</div>
+          <div class="en-side"><span class="lang-chip en">EN</span>${nl2br(sumEn)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="res-summary">
+      <div class="res-stat"><span class="num">${mcqCorrect}/${mcqTotal}</span><span class="lbl">MCQ صحيحة</span></div>
+      <div class="res-stat"><span class="num ${mcqPct >= 80 ? 'green' : mcqPct >= 50 ? 'amber' : 'red'}">${mcqPct}%</span><span class="lbl">نجاح</span></div>
+      <div class="res-stat"><span class="num ${essayAvg >= 8 ? 'green' : essayAvg >= 5 ? 'amber' : 'red'}">${essayAvg}/10</span><span class="lbl">المقالي</span></div>
+      <div class="res-stat"><span class="num">${wrongMCQ.length + essayResultsStore.filter(e => e.result.score < 5).length}</span><span class="lbl">أخطاء</span></div>
+    </div>`;
+
+  if (quizResultsStore.length === 0 && essayResultsStore.length === 0){
+    html += `<div class="res-empty">لا توجد نتائج بعد.</div>`;
+    body.innerHTML = html;
+    return;
+  }
+
+  if (quizResultsStore.length > 0){
+    if (wrongMCQ.length === 0){
+      html += `
+        <div class="section-title ok">
+          <span class="icon">✓</span>
+          <span>أسئلة MCQ</span>
+          <span class="badge">${quizResultsStore.length} / ${quizResultsStore.length} صحيحة</span>
+        </div>
+        <div class="perfect-badge">
+          <span class="picon">🏆</span>
+          <div class="bilingual">
+            <div class="ar-side">رائع! أجبت عن جميع أسئلة الاختيار بشكل صحيح.</div>
+            <div class="en-side"><span class="lang-chip en">EN</span>Excellent! All answers correct.</div>
+          </div>
+        </div>`;
+    } else {
+      html += `
+        <div class="section-title">
+          <span class="icon">✘</span>
+          <span>تحليل الأخطاء</span>
+          <span class="badge">${wrongMCQ.length}</span>
+        </div>`;
+      wrongMCQ.forEach(r => {
+        const qAr = (r.question.ar || r.question.en || '');
+        const wrongOptions = r.options.map((o, j) => ({ ...o, j })).filter(o => !o.correct);
+        html += `
+          <div class="mistake-card">
+            <div class="m-head">
+              <span class="m-num">سؤال ${r.index + 1}</span>
+              <div class="m-q">${questionHtml(r.question)}</div>
+            </div>
+            <div class="m-answer">
+              <div class="m-box wrong">
+                <span class="m-lbl">✘ إجابتك / Your answer</span>
+                ${questionHtml(r.options[r.chosenIndex].text)}
+              </div>
+              <div class="m-box right">
+                <span class="m-lbl">✓ الإجابة الصحيحة / Correct</span>
+                ${questionHtml(r.options[r.correctIndex].text)}
+              </div>
+            </div>
+            <div class="deep-analysis">
+              <div class="deep-head">
+                <span class="badge-line">📖</span>
+                <span>التحليل الكامل / Full Analysis</span>
+              </div>
+              <div class="deep-body">
+                <div class="deep-section">
+                  <div class="deep-section-title"><span class="dot-mark"></span><span>الفكرة الأساسية / Core Idea</span></div>
+                  <div class="deep-section-body"><span class="lang-chip ar">AR</span>${nl2br(r.explanation.ar || '—')}</div>
+                  <div class="deep-section-body en"><span class="lang-chip en">EN</span>${nl2br(r.explanation.en || '—')}</div>
+                </div>
+                <div class="deep-section">
+                  <div class="deep-section-title"><span class="dot-mark"></span><span>لماذا الخيارات الأخرى خاطئة؟</span></div>
+                  <div class="distractor-block distractor-ar">
+                    <div class="distractor-title">تحليل كل خيار بالعربية</div>
+                    ${wrongOptions.map(o => `
+                      <div class="distractor-item">
+                        <span class="mark">✘</span>
+                        <div class="text"><b>«${escapeHtml(o.text.ar || o.text.en)}»</b>${nl2br(o.reason.ar || 'لا يناسب السياق.')}</div>
+                      </div>`).join('')}
+                  </div>
+                  <div class="distractor-block distractor-en">
+                    <div class="distractor-title">Analysis in English</div>
+                    ${wrongOptions.map(o => `
+                      <div class="distractor-item">
+                        <span class="mark">✘</span>
+                        <div class="text"><b>"${escapeHtml(o.text.en || o.text.ar)}"</b>${nl2br(o.reason.en || 'Does not fit.')}</div>
+                      </div>`).join('')}
+                  </div>
+                </div>
+                ${qAr ? `
+                  <div class="deep-section">
+                    <div class="deep-section-title"><span class="dot-mark"></span><span>النص المرجعي الأصلي</span></div>
+                    <div class="deep-quote">${nl2br(qAr)}</div>
+                  </div>` : ''}
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+  }
+
+  if (essayResultsStore.length > 0){
+    html += `
+      <div class="section-title">
+        <span class="icon">✍️</span>
+        <span>تقييم المقالي</span>
+        <span class="badge">${essayResultsStore.length}</span>
+      </div>`;
+    essayResultsStore.forEach(e => {
+      const r = e.result;
+      html += `
+        <div class="essay-feedback">
+          <div class="q-head">
+            <span class="q-num">${e.index + 1}</span>
+            <div class="q-text">${questionHtml(e.question)}</div>
+          </div>
+          <div class="essay-answer-box">
+            <span class="m-lbl">✍️ إجابتك / Your answer</span>
+            ${nl2br(e.answer)}
+          </div>
+          <div class="res-head" style="margin:8px 0 12px">
+            <div class="score-ring" style="--p:${r.score*10};--ring:${r.ring}; width:64px; height:64px">
+              <span style="font-size:1.05rem">${r.score}</span>
+            </div>
+            <div style="flex:1;min-width:0">
+              ${bilingualHtml(r.status)}
+              ${bilingualHtml(r.subtitle)}
+            </div>
+          </div>
+          <div class="deep-analysis">
+            <div class="deep-head"><span class="badge-line">📝</span><span>تعليق المصحح المفصّل</span></div>
+            <div class="deep-body">
+              <div class="deep-section-body"><span class="lang-chip ar">AR</span>${nl2br(r.weakness.ar || '—')}</div>
+              <div class="deep-section-body en"><span class="lang-chip en">EN</span>${nl2br(r.weakness.en || '—')}</div>
+            </div>
+          </div>
+          ${r.missing.length ? `
+            <div class="tags-title">📌 أفكار ناقصة / Missing</div>
+            <div class="tags miss">${r.missing.map(k => `<span class="tag">${escapeHtml(k.word)}</span>`).join('')}</div>
+          ` : `<div class="tags-title" style="color:var(--green)">✓ غطّيت جميع الأفكار</div>`}
+          ${r.matched.length ? `
+            <div class="tags-title" style="margin-top:14px">✓ أفكار ذكرتها</div>
+            <div class="tags good">${r.matched.map(k => `<span class="tag">${escapeHtml(k.word)}</span>`).join('')}</div>
+          ` : ''}
+          <div class="ana-note" style="margin-top:14px">
+            <strong>🔍 أسلوبك:</strong>
+            ${bilingualHtml(r.analysis.note)}
+            <small style="display:block;margin-top:4px;color:var(--muted)">
+              ${r.analysis.words} words · copy: ${r.analysis.copy}%
+            </small>
+          </div>
+        </div>`;
+    });
+  }
+
+  body.innerHTML = html;
+}
+
+/* ================================================================
+   🔄 تبويب التحديث — المنطق الجديد (يقرأ من الصفحة الحية)
+   ================================================================ */
+function refreshUpdateUI(){
+  $('#currentVersionLabel').textContent = APP_VERSION;
+  const platformEl = $('#platformLabel');
+  if (currentPlatform === 'apk'){
+    platformEl.textContent = '📱 تطبيق APK';
+    platformEl.className = 'platform-badge apk';
+  } else {
+    platformEl.textContent = '🌐 موقع ويب';
+    platformEl.className = 'platform-badge web';
+  }
+}
+
+async function fetchLatestFromLive(){
+  const sep = UPDATE_CONFIG.liveUrl.includes('?') ? '&' : '?';
+  const url = UPDATE_CONFIG.liveUrl + sep + '_t=' + Date.now();
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const html = await res.text();
+
+  const vMatch = html.match(/<meta\s+name=["']app-version["']\s+content=["']([^"']+)["']/i);
+  const aMatch = html.match(/<meta\s+name=["']apk-url["']\s+content=["']([^"']*)["']/i);
+
+  if (!vMatch) throw new Error('لم يتم العثور على وسم app-version');
+
+  return {
+    version: vMatch[1].trim(),
+    apkUrl: aMatch ? aMatch[1].trim() : ''
+  };
+}
+
+async function checkForUpdates(){
+  const statusEl = $('#updateStatus');
+  const actionsEl = $('#updateActions');
+  const checkBtn = $('#btnCheckUpdate');
+
+  checkBtn.disabled = true;
+  checkBtn.textContent = '⏳ جاري التحقق...';
+  statusEl.hidden = false;
+  statusEl.className = 'update-status info';
+  statusEl.innerHTML = '⏳ جاري الاتصال بالموقع...';
+  actionsEl.hidden = true;
+  $('#latestVersionLabel').textContent = '—';
+  $('#latestVersionLabel').className = 'val';
+
+  try {
+    const latest = await fetchLatestFromLive();
+    $('#latestVersionLabel').textContent = latest.version;
+
+    const cmp = compareVersions(latest.version, APP_VERSION);
+
+    if (cmp <= 0){
+      statusEl.className = 'update-status ok';
+      statusEl.innerHTML = '✅ أنت تستخدم آخر إصدار متاح!<br>لا توجد تحديثات حالياً.';
+      $('#updateTabBadge').hidden = true;
+    } else {
+      statusEl.className = 'update-status warn';
+      statusEl.innerHTML = `🎉 يوجد تحديث جديد!<br>الإصدار الجديد: <b>${escapeHtml(latest.version)}</b>`;
+      $('#latestVersionLabel').className = 'val new';
+      $('#updateTabBadge').hidden = false;
+
+      actionsEl.hidden = false;
+      $('#btnInstallUpdate').onclick = () => performUpdate(latest);
+    }
+  } catch(e){
+    statusEl.className = 'update-status err';
+    statusEl.innerHTML = '❌ فشل الاتصال بالموقع: ' + escapeHtml(e.message) +
+      '<br><small>تأكد أن رابط الموقع صحيح ومتاح للعامة.</small>';
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.textContent = '🔍 التحقق من التحديثات';
+  }
+}
+
+async function performUpdate({ apkUrl }){
+  if (currentPlatform === 'apk'){
+    if (!apkUrl){
+      toast('⚠️ لم يتم تحديد رابط APK — راجع المسؤول');
+      return;
+    }
+    if (confirm('سيتم فتح الرابط لتحميل الإصدار الجديد. متابعة؟')){
+      window.open(apkUrl, '_blank');
+      toast('📥 افتح الرابط وثبّت الإصدار الجديد');
+    }
+  } else {
+    toast('🔄 جاري التحديث...');
+    await forceReload();
+  }
+}
+
+async function forceReload(){
+  try {
+    if ('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of regs) await reg.unregister();
+    }
+    if ('caches' in window){
+      const names = await caches.keys();
+      for (const name of names) await caches.delete(name);
+    }
+  } catch(e){
+    console.warn('Cache clear failed:', e);
+  }
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 500);
+}
+
+async function silentAutoCheck(){
+  try {
+    const latest = await fetchLatestFromLive();
+    const cmp = compareVersions(latest.version, APP_VERSION);
+    if (cmp > 0){
+      $('#updateTabBadge').hidden = false;
+      setTimeout(() => toast('🔄 يوجد تحديث جديد — افتح تبويب التحديث'), 3200);
+    }
+  } catch(e){}
+}
+
+$('#btnCheckUpdate').addEventListener('click', checkForUpdates);
+
+/* ================================================================
+   Scanner helper
+   ================================================================ */
+const scannerHTML = (msg) => `
+  <div class="scan-line"></div>
+  <div class="skel"><i></i><i></i><i></i><i></i></div>
+  <div class="scan-text">${escapeHtml(msg)}</div>`;
+
+/* ================================================================
+   🏁 التهيئة
+   ================================================================ */
+updateStats();
+syncPresets();
+updateUnitBtnState();
+els.langNote.textContent = langNoteOf();
+els.diffNote.textContent = diffNoteOf();
+updateHistoryBadge();
+refreshUpdateUI();
+showTab('main');
+setTimeout(silentAutoCheck, 4000);
+console.log('%c✨ OWLIX — جاهز', 'color:#8b5a2b;font-weight:bold;font-size:14px');
+console.log('Version:', APP_VERSION, '| Platform:', currentPlatform);
+console.log('Worker:', WORKER_URL);
+</script>
+</body>
+</html>
